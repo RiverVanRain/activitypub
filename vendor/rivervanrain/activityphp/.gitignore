@@ -1,0 +1,9 @@
+/build
+
+# Cache related:
+/cache
+.phpunit.result.cache
+
+# Dependencies related:
+/vendor
+composer.lock

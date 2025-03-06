@@ -1,0 +1,35 @@
+{
+  "name": "openwebicons",
+  "version": "1.6.3",
+  "description": "OpenWeb Icons",
+  "main": "css/openwebicons.min.css",
+  "author": {
+    "name": "Matthias Pfefferle",
+    "email": "pfefferle@gmail.com",
+    "url": "http://notizblog.org"
+  },
+  "homepage": "http://pfefferle.github.io/openwebicons/",
+  "license": "OFL-1.1",
+  "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-contrib-sass": "^2.0.0",
+    "grunt-kss": "^5.0.1",
+    "grunt-svg2ttf": "*",
+    "grunt-update-json": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pfefferle/openwebicons.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pfefferle/openwebicons/issues"
+  },
+  "keywords": [
+    "openweb",
+    "icons",
+    "font",
+    "css",
+    "sass",
+    "scss"
+  ]
+}
