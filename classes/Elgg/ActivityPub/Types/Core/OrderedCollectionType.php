@@ -1,9 +1,11 @@
 <?php
+
 namespace Elgg\ActivityPub\Types\Core;
 
 use Elgg\ActivityPub\Attributes\ExportProperty;
 
-class OrderedCollectionType extends CollectionType {
+class OrderedCollectionType extends CollectionType
+{
     #[ExportProperty]
     protected string $type = 'OrderedCollection';
 
@@ -13,9 +15,9 @@ class OrderedCollectionType extends CollectionType {
     #[ExportProperty]
     protected array $orderedItems;
 
-    public function setOrderedItems(array $items): self {
+    public function setOrderedItems(array $items): self
+    {
         $this->orderedItems = $items;
         return $this;
     }
-
 }

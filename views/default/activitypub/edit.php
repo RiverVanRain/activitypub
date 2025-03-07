@@ -6,7 +6,7 @@ $guid = (int) get_input('guid');
 
 $entity = get_entity($guid);
 if (!$entity instanceof \Elgg\ActivityPub\Entity\ActivityPubActivity) {
-	throw new \Elgg\Exceptions\Http\EntityNotFoundException();
+    throw new \Elgg\Exceptions\Http\EntityNotFoundException();
 }
 
 $modaltitle = elgg_format_element('h3', ['class' => 'modal-title'], elgg_echo('activitypub:activitypub_activity:edit', [$guid]));

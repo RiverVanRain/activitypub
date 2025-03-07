@@ -1,16 +1,17 @@
 <?php
+
 /**
  * FederatedObject river view.
  */
 
 $item = elgg_extract('item', $vars);
 if (!$item instanceof \ElggRiverItem) {
-	return;
+    return;
 }
 
 $object = $item->getObjectEntity();
 if (!$object instanceof \Elgg\ActivityPub\Entity\FederatedObject) {
-	return;
+    return;
 }
 
 $vars['message'] = (string) $object->excerpt;

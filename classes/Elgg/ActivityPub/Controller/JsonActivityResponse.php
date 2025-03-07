@@ -1,4 +1,5 @@
 <?php
+
 namespace Elgg\ActivityPub\Controller;
 
 use Laminas\Diactoros\Response\InjectContentTypeTrait;
@@ -18,5 +19,4 @@ class JsonActivityResponse extends JsonResponse
 
         parent::__construct($data, $status, $headers, $encodingOptions);
     }
-
 }

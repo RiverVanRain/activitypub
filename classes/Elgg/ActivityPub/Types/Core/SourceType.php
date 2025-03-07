@@ -1,10 +1,12 @@
 <?php
+
 namespace Elgg\ActivityPub\Types\Core;
 
 use Elgg\ActivityPub\Attributes\ExportProperty;
 use Elgg\ActivityPub\Types\AbstractType;
 
-class SourceType extends AbstractType {
+class SourceType extends AbstractType
+{
     protected string $type = 'Source';
 
     /**

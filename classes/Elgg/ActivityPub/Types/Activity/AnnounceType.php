@@ -1,4 +1,5 @@
 <?php
+
 namespace Elgg\ActivityPub\Types\Activity;
 
 use Elgg\ActivityPub\Attributes\ExportProperty;
@@ -11,5 +12,4 @@ class AnnounceType extends ActivityType
 {
     #[ExportProperty]
     protected string $type = 'Announce';
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WebFinger
  * @author Nikolai Shcherbin
@@ -44,11 +45,11 @@ namespace Elgg\ActivityPub\WebFinger\JsonRd;
  * given member in the link relation object refers only to that
  * particular object.
  *
- * Forked from https://github.com/delirehberi/webfinger, 
+ * Forked from https://github.com/delirehberi/webfinger,
  * @see https://github.com/delirehberi/webfinger/blob/master/src/JsonRDLink.php
  */
-class JsonRdLink {
-
+class JsonRdLink
+{
   /**
    * Link Relation Types
    * Registration Procedure(s)
@@ -61,7 +62,7 @@ class JsonRdLink {
    * New link relations, along with changes to existing relations, can be requested
    * using the [https://github.com/link-relations/registry] or the mailing list defined in [RFC8288].
    */
-  const REGISTERED_RELATION_TYPES = [
+    const REGISTERED_RELATION_TYPES = [
     'about',
     'alternate',
     'appendix',
@@ -142,7 +143,7 @@ class JsonRdLink {
     'webmention',
     'working-copy',
     'working-copy-of',
-  ];
+    ];
 
   /**
    * The value of the "rel" member is a string that is either a URI or a
@@ -166,7 +167,7 @@ class JsonRdLink {
    * The "rel" member MUST be present in the link relation object.
    * @var string
    */
-  protected $rel = "";
+    protected $rel = "";
   /**
    * The value of the "type" member is a string that indicates the media
    * type [https://tools.ietf.org/html/rfc7033#ref-9] of the target resource (see RFC 6838
@@ -174,7 +175,7 @@ class JsonRdLink {
    * The "type" member is OPTIONAL in the link relation object.
    * @var string
    */
-  protected $type = "";
+    protected $type = "";
 
   /**
    * The value of the "href" member is a string that contains a URI
@@ -182,14 +183,14 @@ class JsonRdLink {
    * The "href" member is OPTIONAL in the link relation object.
    * @var string
    */
-  protected $href;
-  
+    protected $href;
+
    /**
    * Optional: implement OStatus subscribe link
    * See https://www.w3.org/community/ostatus/wiki/Workflow.html
    * @var string
    */
-  protected $template = "";
+    protected $template = "";
 
   /**
    * The "titles" object comprises zero or more name/value pairs whose
@@ -219,7 +220,7 @@ class JsonRdLink {
    *
    * @var array[string=>string]
    */
-  protected $titles = [];
+    protected $titles = [];
 
   /**
    *
@@ -234,174 +235,190 @@ class JsonRdLink {
    * The "properties" member is OPTIONAL in the link relation object.
    * @var array[string=>string]
    */
-  protected $properties = [];
+    protected $properties = [];
 
   /**
    * @return string|null
    */
-  public function getType(): ?string {
-    return $this->type;
-  }
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
 
   /**
    * @param string $type
    * @return JsonRDLink
    */
-  public function setType(string $type): JsonRDLink {
-    $this->type = $type;
-    return $this;
-  }
+    public function setType(string $type): JsonRDLink
+    {
+        $this->type = $type;
+        return $this;
+    }
 
   /**
    * @return string|null
    */
-  public function getHref(): ?string {
-    return $this->href;
-  }
+    public function getHref(): ?string
+    {
+        return $this->href;
+    }
 
   /**
    * @param string $href
    * @return JsonRDLink
    * @todo we need to write for url validation for $href argument.
    */
-  public function setHref(string $href): JsonRDLink {
-    $this->href = $href;
-    return $this;
-  }
-  
+    public function setHref(string $href): JsonRDLink
+    {
+        $this->href = $href;
+        return $this;
+    }
+
   /**
    * @return string|null
    */
-  public function getTemplate(): ?string {
-    return $this->template;
-  }
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
 
   /**
    * @param string $template
    * @return JsonRDLink
    * @todo we need to write for url validation for $template argument.
    */
-  public function setTemplate(string $template): JsonRDLink {
-    $this->template = $template;
-    return $this;
-  }
+    public function setTemplate(string $template): JsonRDLink
+    {
+        $this->template = $template;
+        return $this;
+    }
 
   /**
    * @return array
    */
-  public function getTitles(): array {
-    return $this->titles;
-  }
+    public function getTitles(): array
+    {
+        return $this->titles;
+    }
 
   /**
    * @param array $titles
    * @return JsonRDLink
    */
-  public function setTitles(array $titles): JsonRDLink {
-    $this->titles = $titles;
-    return $this;
-  }
+    public function setTitles(array $titles): JsonRDLink
+    {
+        $this->titles = $titles;
+        return $this;
+    }
 
   /**
    * @param string $locale
    * @param string $value
    * @return JsonRDLink
    */
-  public function addTitle(string $locale, string $value): JsonRDLink {
-    if (!array_key_exists($locale, $this->titles)) {
-      $this->titles[$locale] = $value;
+    public function addTitle(string $locale, string $value): JsonRDLink
+    {
+        if (!array_key_exists($locale, $this->titles)) {
+            $this->titles[$locale] = $value;
+        }
+        return $this;
     }
-    return $this;
-  }
 
   /**
    * @param string $locale
    * @return JsonRDLink
    */
-  public function removeTitle(string $locale): JsonRDLink {
-    if (!array_key_exists($locale, $this->titles)) {
-      return $this;
+    public function removeTitle(string $locale): JsonRDLink
+    {
+        if (!array_key_exists($locale, $this->titles)) {
+            return $this;
+        }
+        unset($this->titles[$locale]);
+        return $this;
     }
-    unset($this->titles[$locale]);
-    return $this;
-  }
 
   /**
    * @return array
    */
-  public function getProperties(): array {
-    return $this->properties;
-  }
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
 
   /**
    * @param array $properties
    * @return JsonRDLink
    */
-  public function setProperties(array $properties): JsonRDLink {
-    $this->properties = $properties;
-    return $this;
-  }
+    public function setProperties(array $properties): JsonRDLink
+    {
+        $this->properties = $properties;
+        return $this;
+    }
 
   /**
    * @param string $url
    * @param string $value
    * @return JsonRDLink
    */
-  public function addProperty(string $url, string $value): JsonRDLink {
-    $this->properties[$url] = $value;
-    return $this;
-  }
+    public function addProperty(string $url, string $value): JsonRDLink
+    {
+        $this->properties[$url] = $value;
+        return $this;
+    }
 
   /**
    * @param string $url
    * @return JsonRDLink
    */
-  public function removeProperty(string $url): JsonRDLink {
-    if (!array_key_exists($url, $this->properties)) {
-      return $this;
+    public function removeProperty(string $url): JsonRDLink
+    {
+        if (!array_key_exists($url, $this->properties)) {
+            return $this;
+        }
+        unset($this->properties[$url]);
+        return $this;
     }
-    unset($this->properties[$url]);
-    return $this;
-  }
 
   /**
    * @return string
    */
-  public function getRel(): string {
-    return $this->rel;
-  }
+    public function getRel(): string
+    {
+        return $this->rel;
+    }
 
   /**
    * @param string $relation
    * @return JsonRDLink
    * @throws \Exception
    */
-  public function setRel(string $relation): JsonRDLink {
-    if (in_array($relation, self::REGISTERED_RELATION_TYPES)) {
-      $this->rel = $relation;
-      return $this;
+    public function setRel(string $relation): JsonRDLink
+    {
+        if (in_array($relation, self::REGISTERED_RELATION_TYPES)) {
+            $this->rel = $relation;
+            return $this;
+        }
+        preg_match("/^http(s)?\:\/\/[a-z]+\.[a-z]+/", $relation, $match);
+        if (isset($match[0]) && !empty($match[0])) {
+            $this->rel = $relation;
+            return $this;
+        }
+        throw new \Exception("The value of the `rel` member MUST contain exactly one URI or registered relation type.");
     }
-    preg_match("/^http(s)?\:\/\/[a-z]+\.[a-z]+/", $relation, $match);
-    if (isset($match[0]) && !empty($match[0])) {
-      $this->rel = $relation;
-      return $this;
-    }
-    throw new \Exception("The value of the `rel` member MUST contain exactly one URI or registered relation type.");
-  }
 
   /**
    * @return array
    */
-  public function toArray(): array {
-    $data = [];
-    $data['rel'] = $this->getRel();
+    public function toArray(): array
+    {
+        $data = [];
+        $data['rel'] = $this->getRel();
 
-    !empty($this->getType()) && $data['type'] = $this->getType();
-	!empty($this->getHref()) && $data['href'] = $this->getHref();
-	!empty($this->getTemplate()) && $data['template'] = $this->getTemplate();
-    !empty($this->getTitles()) && $data['titles'] = $this->getTitles();
-    !empty($this->getProperties()) && $data['properties'] = $this->getProperties();
-    return $data;
-  }
-
+        !empty($this->getType()) && $data['type'] = $this->getType();
+        !empty($this->getHref()) && $data['href'] = $this->getHref();
+        !empty($this->getTemplate()) && $data['template'] = $this->getTemplate();
+        !empty($this->getTitles()) && $data['titles'] = $this->getTitles();
+        !empty($this->getProperties()) && $data['properties'] = $this->getProperties();
+        return $data;
+    }
 }

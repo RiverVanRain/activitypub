@@ -1,15 +1,17 @@
 <?php
+
 namespace Elgg\ActivityPub\Helpers;
 
 use Elgg\ActivityPub\Common\Regex;
 
-class ContentParserBuilder {
- 
+class ContentParserBuilder
+{
     /**
      * Returns all urls that are found in a string
      * @return string[]
      */
-    public static function getMentions(string $input): array {
+    public static function getMentions(string $input): array
+    {
         preg_match_all(Regex::AT, $input, $matches);
 
         /** @var string[] */

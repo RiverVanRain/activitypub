@@ -1,9 +1,11 @@
 <?php
+
 namespace Elgg\ActivityPub\Types\Core;
 
 use Elgg\ActivityPub\Attributes\ExportProperty;
 
-class CollectionType extends ObjectType {
+class CollectionType extends ObjectType
+{
     #[ExportProperty]
     protected string $type = 'Collection';
 
@@ -18,13 +20,13 @@ class CollectionType extends ObjectType {
      */
     #[ExportProperty]
     protected string $current;
-    
+
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-first
      */
     #[ExportProperty]
     protected string $first;
-    
+
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-last
      */

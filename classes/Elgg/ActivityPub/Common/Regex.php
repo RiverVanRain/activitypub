@@ -1,14 +1,16 @@
 <?php
+
 /**
  * Common Regex service.
  */
 
 namespace Elgg\ActivityPub\Common;
 
-class Regex {
+class Regex
+{
     // @tags
     const AT = '/(?:^|\W|\s)@([a-z0-9_\-\.]+[a-z0-9_](?:@([a-z0-9_\-]+\.[a-z]{2,}(\.[a-z]{2,})?))?)\b/uim';
-    
+
     // #tags
     const HASH_TAG = '/([^&]|\b|^)#([\wÀ-ÿ\u0E00-\u0E7F\u2460-\u9FBB]+)/uim';
 
@@ -26,7 +28,8 @@ class Regex {
     /**
      * Wrapper around preg_match_all for testing.
      */
-    public function globalMatch($regex, $string): int {
+    public function globalMatch($regex, $string): int
+    {
         return preg_match_all($regex, $string);
     }
 }

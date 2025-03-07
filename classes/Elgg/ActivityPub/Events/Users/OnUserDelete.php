@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ActivityPub
  * @author Nikolai Shcherbin
@@ -9,19 +10,20 @@
 
 namespace Elgg\ActivityPub\Events\Users;
 
-class OnUserDelete {
+class OnUserDelete
+{
+    public function __invoke(\Elgg\Event $event)
+    {
 
-	public function __invoke(\Elgg\Event $event) {
-		
-		$entity = $event->getObject();
-		if (!$entity instanceof \ElggUser) {
-			return;
-		}
-		
-		if (!(bool) $entity->activitypub_actor) {
-			return;
-		}
-		
-		return elgg()->activityPubSignature->deleteKeys((string) $entity->username);
-	}
+        $entity = $event->getObject();
+        if (!$entity instanceof \ElggUser) {
+            return;
+        }
+
+        if (!(bool) $entity->activitypub_actor) {
+            return;
+        }
+
+        return elgg()->activityPubSignature->deleteKeys((string) $entity->username);
+    }
 }

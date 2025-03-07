@@ -1,10 +1,12 @@
 <?php
+
 namespace Elgg\ActivityPub\Types\Core;
 
 use Elgg\ActivityPub\Attributes\ExportProperty;
 use Elgg\ActivityPub\Types\AbstractType;
 
-class LinkType extends AbstractType {
+class LinkType extends AbstractType
+{
     #[ExportProperty]
     protected string $type = 'Link';
 

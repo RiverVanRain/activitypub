@@ -1,4 +1,5 @@
 <?php
+
 namespace Elgg\ActivityPub\Factories;
 
 use GuzzleHttp\Exception\ClientException;
@@ -30,7 +31,8 @@ use Elgg\Exceptions\Http\EntityNotFoundException;
 use Elgg\Exceptions\Http\PageNotFoundException;
 use Elgg\Traits\Di\ServiceFacade;
 
-class ObjectFactory {
+class ObjectFactory
+{
     use ServiceFacade;
 
     protected $manager;
@@ -42,21 +44,24 @@ class ObjectFactory {
     }
 
      /**
-	 * Returns registered service name
-	 * @return string
-	 */
-	public static function name() {
-		return 'activityPubObjectFactory';
-	}
+     * Returns registered service name
+     * @return string
+     */
+    public static function name()
+    {
+        return 'activityPubObjectFactory';
+    }
 
     /**
-	 * {@inheritdoc}
-	 */
-	public function __get($name) {
-		return $this->$name;
-	}
+     * {@inheritdoc}
+     */
+    public function __get($name)
+    {
+        return $this->$name;
+    }
 
-    public function fromUri(string $uri): ObjectType {
+    public function fromUri(string $uri): ObjectType
+    {
         if ($this->manager->isLocalUri($uri)) {
             $entity = $this->manager->getEntityFromUri($uri);
             if (!$entity instanceof \ElggObject) {
@@ -74,7 +79,7 @@ class ObjectFactory {
             }
         } catch (ConnectException $e) {
             throw new EntityNotFoundException("Could not connect to $uri");
-        } catch (ClientException|ServerException $e) {
+        } catch (ClientException | ServerException $e) {
             $code = $e->getCode();
 
             switch ($code) {
@@ -106,19 +111,20 @@ class ObjectFactory {
      * @throws EntityNotFoundException
      * @throws \Elgg\Exceptions\HttpException
      */
-    public function fromEntity(\ElggObject|FederatedObject $entity): ObjectType {
-		if (!$entity) {
+    public function fromEntity(\ElggObject|FederatedObject $entity): ObjectType
+    {
+        if (!$entity) {
             throw new NotImplementedException();
         }
-		
-		$owner = $entity->getOwnerEntity();
-		if (!$owner instanceof \ElggEntity) {
+
+        $owner = $entity->getOwnerEntity();
+        if (!$owner instanceof \ElggEntity) {
             throw new NotImplementedException();
         }
-		
-		$actorUri = elgg_generate_url("view:activitypub:{$owner->getType()}", [
-			'guid' => (int) $owner->guid,
-		]);
+
+        $actorUri = elgg_generate_url("view:activitypub:{$owner->getType()}", [
+            'guid' => (int) $owner->guid,
+        ]);
 
         /**
          * If this is a remote entity, then we need to get the remote uri
@@ -132,131 +138,131 @@ class ObjectFactory {
                 throw new PageNotFoundException(elgg_echo('FoundActivityPubEntityButCouldNotResolveRemoteUri'));
             }
         }
-        
-        //activity
-		$build = [];
 
-		$activity_reference = (int) $entity->activity_reference;
-		$activity = elgg_call(ELGG_IGNORE_ACCESS, function() use ($activity_reference) {
-			return get_entity($activity_reference);
-		});
-		
-		if ($activity instanceof ActivityPubActivity) {
-			$build = $activity->buildActivity();
-		}
-		
+        //activity
+        $build = [];
+
+        $activity_reference = (int) $entity->activity_reference;
+        $activity = elgg_call(ELGG_IGNORE_ACCESS, function () use ($activity_reference) {
+            return get_entity($activity_reference);
+        });
+
+        if ($activity instanceof ActivityPubActivity) {
+            $build = $activity->buildActivity();
+        }
+
         // default options
-		$options = [
-			'parse_emails' => false,
-			'parse_hashtags' => false,
-			'parse_urls' => true,
-			'parse_usernames' => false,
-			'parse_groups' => false,
-			'parse_mentions' => false,
-			'oembed' => false,
-			'sanitize' => true,
-			'autop' => true,
-		];
-		
-		$content = _elgg_services()->html_formatter->formatBlock((string) $entity->description, $options);
+        $options = [
+            'parse_emails' => false,
+            'parse_hashtags' => false,
+            'parse_urls' => true,
+            'parse_usernames' => false,
+            'parse_groups' => false,
+            'parse_mentions' => false,
+            'oembed' => false,
+            'sanitize' => true,
+            'autop' => true,
+        ];
+
+        $content = _elgg_services()->html_formatter->formatBlock((string) $entity->description, $options);
 
         $json = [
             'id' => (string) elgg()->activityPubUtility->getActivityPubID($entity),
             'type' => (string) elgg()->activityPubUtility->getActivityPubObject($entity),
-			'name' => (string) $entity->getDisplayName(),
+            'name' => (string) $entity->getDisplayName(),
             'content' => $content,
             'attributedTo' => $actorUri,
-			'published' => date('c', (int) $entity->time_created),
+            'published' => date('c', (int) $entity->time_created),
             'url' => ($entity instanceof \ElggComment) ? elgg_generate_url('view:object:comment', [
-				'guid' => (int) $entity->guid
-			]) : (string) $entity->getURL(),
+                'guid' => (int) $entity->guid
+            ]) : (string) $entity->getURL(),
             'to' => (!empty($build['to'])) ? $build['to'] : [],
-			'cc' => (!empty($build['cc'])) ? $build['cc'] : [],
-			'sensitive' => false,
+            'cc' => (!empty($build['cc'])) ? $build['cc'] : [],
+            'sensitive' => false,
         ];
-		
-		//updated
-		$activity_reference = get_entity((int) $entity->activity_reference);
-		if ($activity_reference instanceof ActivityPubActivity && !empty((string) $activity_reference->updated)) {
-			$json['updated'] = (string) $activity_reference->updated;
-		}
+
+        //updated
+        $activity_reference = get_entity((int) $entity->activity_reference);
+        if ($activity_reference instanceof ActivityPubActivity && !empty((string) $activity_reference->updated)) {
+            $json['updated'] = (string) $activity_reference->updated;
+        }
 
         //attachments
-		$attachments = [];
-		
-		$files = elgg_get_entities([
-			'relationship' => 'attached',
-			'relationship_guid' => (int) $entity->guid,
-			'inverse_relationship' => ($entity instanceof \wZm\River\Entity\River) ? true : false, // WIP - remove after updating 'river' plugin
-			'limit' => 0,
-			'order_by' => [new OrderByClause('time_created', 'ASC')],
-		]);
-		
-		if (!empty($files)) {
-			foreach ($files as $file) {
-				$mimetype = $file->getMimeType();
-				$basetype = substr($mimetype, 0, strpos($mimetype, '/'));
-				
-				$attachment = [
-					'type' => match ($basetype) {
-						'image' => 'Image',
-						'video' => 'Video',
-						'audio' => 'Audio',
-						default => 'Document'
-					},
-					'name' => $file->getDisplayName(),
-					'url' => $file->getDownloadURL(false),
-					'mediaType' => $mimetype,
-				];
-				
-				$attachments[] = $attachment;
-			}
-		}
-		
-		$json['attachment'] = $attachments;
+        $attachments = [];
+
+        $files = elgg_get_entities([
+            'relationship' => 'attached',
+            'relationship_guid' => (int) $entity->guid,
+            'inverse_relationship' => ($entity instanceof \wZm\River\Entity\River) ? true : false, // WIP - remove after updating 'river' plugin
+            'limit' => 0,
+            'order_by' => [new OrderByClause('time_created', 'ASC')],
+        ]);
+
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                $mimetype = $file->getMimeType();
+                $basetype = substr($mimetype, 0, strpos($mimetype, '/'));
+
+                $attachment = [
+                    'type' => match ($basetype) {
+                        'image' => 'Image',
+                        'video' => 'Video',
+                        'audio' => 'Audio',
+                        default => 'Document'
+                    },
+                    'name' => $file->getDisplayName(),
+                    'url' => $file->getDownloadURL(false),
+                    'mediaType' => $mimetype,
+                ];
+
+                $attachments[] = $attachment;
+            }
+        }
+
+        $json['attachment'] = $attachments;
 
         $container = $entity->getContainerEntity();
 
-		//mention
-		if (!empty($build['object']['tag'])) {
-			$json['tag'] = $build['object']['tag'];
-		}
-		
-		//audience
-		if (!empty($build['object']['audience'])) {
-			$json['audience'] = $build['object']['audience'];
-		}
+        //mention
+        if (!empty($build['object']['tag'])) {
+            $json['tag'] = $build['object']['tag'];
+        }
 
-		//target
-		if (!empty($build['object']['target'])) {
-			$json['target'] = $build['object']['target'];
-		}
-		
-		//reply
-		if (!empty($build['object']['inReplyTo'])) {
-			$json['inReplyTo'] = $build['object']['inReplyTo'];
-		}
+        //audience
+        if (!empty($build['object']['audience'])) {
+            $json['audience'] = $build['object']['audience'];
+        }
 
-		//cover
-		if (!empty($build['object']['image'])) {
-			$json['image'] = $build['object']['image'];
-		}
+        //target
+        if (!empty($build['object']['target'])) {
+            $json['target'] = $build['object']['target'];
+        }
 
-		//summary
-		if (!empty($build['object']['summary'])) {
-			$summary = $build['object']['summary'];
+        //reply
+        if (!empty($build['object']['inReplyTo'])) {
+            $json['inReplyTo'] = $build['object']['inReplyTo'];
+        }
 
-			$json['summary'] = trim($summary);
-			
-			$json['source'] = [
-				'content' => trim($summary),
-				'mediaType' => 'text/markdown',
-			];
-			
-			$json['_misskey_summary'] = trim($summary);
-		}
-		
-		// If this is a 'reply', then cc in the owner of who we are replying to
+        //cover
+        if (!empty($build['object']['image'])) {
+            $json['image'] = $build['object']['image'];
+        }
+
+        //summary
+        if (!empty($build['object']['summary'])) {
+            $summary = $build['object']['summary'];
+
+            $json['summary'] = trim($summary);
+
+            $json['source'] = [
+                'content' => trim($summary),
+                'mediaType' => 'text/markdown',
+            ];
+
+            $json['_misskey_summary'] = trim($summary);
+        }
+
+        // If this is a 'reply', then cc in the owner of who we are replying to
         if ($json['inReplyTo'] ?? null) {
             $replyObject = $this->fromUri($json['inReplyTo']);
             $json['cc'][] = $replyObject->attributedTo;
@@ -265,125 +271,126 @@ class ObjectFactory {
         return $this->fromJson($json);
     }
 
-    public function fromJson(array $json): ObjectType {
+    public function fromJson(array $json): ObjectType
+    {
         if (isset(ActorFactory::ACTOR_TYPES[$json['type']])) {
             return elgg()->activityPubActorFactory->fromJson($json);
         }
-		
+
         $object = match ($json['type']) {
-			'Article' => new ArticleType(),
-			'Event' => new EventType(),
-			'Note' => new NoteType(),
-			'Page' => new PageType(),
-			'Audio' => new AudioType(),
-			'Document' => new DocumentType(),
+            'Article' => new ArticleType(),
+            'Event' => new EventType(),
+            'Note' => new NoteType(),
+            'Page' => new PageType(),
+            'Audio' => new AudioType(),
+            'Document' => new DocumentType(),
             'Image' => new ImageType(),
-			'Video' => new VideoType(),
+            'Video' => new VideoType(),
             default => throw new NotImplementedException(),
         };
-		
-		// Must
-		if (!isset($json['id'])) {
-			throw new \Exception('Required fields are missing');
-		}
-		
-		$object->id = $json['id'];
-		
-		// May
-		if (isset($json['name'])) {
-			$object->name = $json['name'];
-		}
-		
-		if (isset($json['content'])) {
-			$object->content = $json['content'];
-		}
-		
-		if (isset($json['summary'])) {
-			$object->summary = $json['summary'];
-		}
-		
-		if (isset($json['attributedTo'])) {
-			$object->attributedTo = $json['attributedTo'];
-		}
-		
-		if (isset($json['published'])) {
-			$object->published = $json['published'];
-		}
-		
-		if (isset($json['updated'])) {
-			$object->updated = $json['updated'];
-		}
-		
-		if (isset($json['url'])) {
+
+        // Must
+        if (!isset($json['id'])) {
+            throw new \Exception('Required fields are missing');
+        }
+
+        $object->id = $json['id'];
+
+        // May
+        if (isset($json['name'])) {
+            $object->name = $json['name'];
+        }
+
+        if (isset($json['content'])) {
+            $object->content = $json['content'];
+        }
+
+        if (isset($json['summary'])) {
+            $object->summary = $json['summary'];
+        }
+
+        if (isset($json['attributedTo'])) {
+            $object->attributedTo = $json['attributedTo'];
+        }
+
+        if (isset($json['published'])) {
+            $object->published = $json['published'];
+        }
+
+        if (isset($json['updated'])) {
+            $object->updated = $json['updated'];
+        }
+
+        if (isset($json['url'])) {
             $object->url = $json['url'];
         }
-		
-		if (isset($json['to'])) {
+
+        if (isset($json['to'])) {
             $object->to = $json['to'];
         }
 
         if (isset($json['cc'])) {
             $object->cc = $json['cc'];
         }
-		
-		if (isset($json['sensitive'])) {
+
+        if (isset($json['sensitive'])) {
             $object->sensitive = $json['sensitive'];
         }
-		
-		if (isset($json['attachment'])) {
+
+        if (isset($json['attachment'])) {
             $object->attachment = [];
 
             foreach ($json['attachment'] as $attachment) {
-               $object->attachment[] = $attachment;
+                $object->attachment[] = $attachment;
             }
         }
-		
-		//tag
-		if (isset($json['tag'])) {
-			$object->tag = $json['tag'];
-		}
-		
-		if (isset($json['audience'])) {
+
+        //tag
+        if (isset($json['tag'])) {
+            $object->tag = $json['tag'];
+        }
+
+        if (isset($json['audience'])) {
             $object->audience = $json['audience'];
         }
-		
-		if (isset($json['target'])) {
+
+        if (isset($json['target'])) {
             $object->target = $json['target'];
         }
-	
+
         if (isset($json['inReplyTo'])) {
             $object->inReplyTo = JsonLdHelper::getValueOrId($json['inReplyTo']);
         }
-		
-		if (isset($json['source']) && is_array($json['source'])) {
+
+        if (isset($json['source']) && is_array($json['source'])) {
             $object->source = new SourceType();
             $object->source->content = $json['source']['content'];
             $object->source->mediaType = $json['source']['mediaType'];
         }
-		
-		if (isset($json['_misskey_summary'])) {
+
+        if (isset($json['_misskey_summary'])) {
             $object->_misskey_summary = $json['_misskey_summary'];
         }
 
         if (isset($json['icon']) && is_array($json['icon'])) {
-			$icon = new ImageType();
-			if (isset($json['icon']['mediaType'])) {
-				$icon->mediaType = $json['icon']['mediaType'];
-			}
-			$icon->url = $json['icon']['url'] ?? '';
-			$icon->name = $json['icon']['name'] ?? '';
-			$object->icon = $icon;
-		}
+            $icon = new ImageType();
+            if (isset($json['icon']['mediaType'])) {
+                $icon->mediaType = $json['icon']['mediaType'];
+            }
+            $icon->url = $json['icon']['url'] ?? '';
+            $icon->name = $json['icon']['name'] ?? '';
+            $object->icon = $icon;
+        }
 
-		if (isset($json['image']) && is_array($json['image'])) {
-			$image = new ImageType();
-			if (isset($json['image']['mediaType'])) {
-				$image->mediaType = $json['image']['mediaType'];
-			}
-			$image->url = $json['image']['url'] ?? '';
-			$image->name = $json['image']['name'] ?? '';
-			$object->image = $image;
-		}
+        if (isset($json['image']) && is_array($json['image'])) {
+            $image = new ImageType();
+            if (isset($json['image']['mediaType'])) {
+                $image->mediaType = $json['image']['mediaType'];
+            }
+            $image->url = $json['image']['url'] ?? '';
+            $image->name = $json['image']['name'] ?? '';
+            $object->image = $image;
+        }
 
         if (isset($json['mediaType'])) {
             $object->mediaType = $json['mediaType'];
@@ -404,7 +411,8 @@ class ObjectFactory {
         return $object;
     }
 
-    private function buildTag(string $content): array {
+    private function buildTag(string $content): array
+    {
         $tag = [];
 
         // Is this a mention?

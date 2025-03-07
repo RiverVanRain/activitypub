@@ -1,4 +1,5 @@
 <?php
+
 namespace Elgg\ActivityPub\Factories;
 
 use ElggEntity;
@@ -23,7 +24,8 @@ use Elgg\Exceptions\Http\PageNotFoundException;
 use Elgg\Traits\Di\ServiceFacade;
 
 // WIP
-class ActivityFactory {
+class ActivityFactory
+{
     use ServiceFacade;
 
     protected $manager;
@@ -35,37 +37,39 @@ class ActivityFactory {
     }
 
     /**
-	 * Returns registered service name
-	 * @return string
-	 */
-	public static function name() {
-		return 'activityPubActivityFactory';
-	}
+     * Returns registered service name
+     * @return string
+     */
+    public static function name()
+    {
+        return 'activityPubActivityFactory';
+    }
 
     /**
-	 * {@inheritdoc}
-	 */
-	public function __get($name) {
-		return $this->$name;
-	}
+     * {@inheritdoc}
+     */
+    public function __get($name)
+    {
+        return $this->$name;
+    }
 
     public function fromEntity(
         ActivityFactoryOpEnum $op,
         ElggEntity $entity,
         ElggUser $actor
     ): ActivityType {
-        $item = match($op) {
+        $item = match ($op) {
             ActivityFactoryOpEnum::CREATE => new CreateType(),
             ActivityFactoryOpEnum::UPDATE => new UpdateType(),
             ActivityFactoryOpEnum::DELETE => new DeleteType(),
         };
-       
+
         $object = elgg()->activityPubObjectFactory->fromEntity($entity);
-		
-		$activity_reference = (int) $object->activity_reference;
-		$activity = elgg_call(ELGG_IGNORE_ACCESS, function() use ($activity_reference) {
-			return get_entity($activity_reference);
-		});
+
+        $activity_reference = (int) $object->activity_reference;
+        $activity = elgg_call(ELGG_IGNORE_ACCESS, function () use ($activity_reference) {
+            return get_entity($activity_reference);
+        });
 
         $item->id = $this->manager->getUriFromEntity($entity) . '/activity';
 
@@ -82,7 +86,8 @@ class ActivityFactory {
         return $item;
     }
 
-    public function fromJson(array $json, AbstractActorType|string $actor): ActivityType {
+    public function fromJson(array $json, AbstractActorType|string $actor): ActivityType
+    {
         $activity = match ($json['type']) {
             'Create' => new CreateType(),
             'Follow' => new FollowType(),

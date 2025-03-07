@@ -1,4 +1,5 @@
 <?php
+
 namespace Elgg\ActivityPub\Types;
 
 use DateTime;
@@ -7,7 +8,8 @@ use Elgg\ActivityPub\Entity\ActivityPubActivity;
 use Elgg\ActivityPub\Helpers\ExportableInterface;
 use ReflectionClass;
 
-abstract class AbstractType implements ExportableInterface {
+abstract class AbstractType implements ExportableInterface
+{
     #[ExportProperty]
     protected string $type;
 
@@ -15,20 +17,23 @@ abstract class AbstractType implements ExportableInterface {
         ActivityPubActivity::CONTEXT_URL,
     ];
 
-    public function getContextExport(): array {
+    public function getContextExport(): array
+    {
         return [
             '@context' => count($this->contexts) === 1 ? $this->contexts[0] : $this->contexts
         ];
     }
 
-    public function getType(): string {
+    public function getType(): string
+    {
         return $this->type;
     }
 
     /**
      * @inheritDoc
      */
-    public function export(array $extras = []): array {
+    public function export(array $extras = []): array
+    {
         $export = [ ];
 
         $reflection = new ReflectionClass($this);
@@ -39,7 +44,6 @@ abstract class AbstractType implements ExportableInterface {
 
             foreach ($attributes as $attribute) {
                 if ($attribute->getName() === ExportProperty::class && isset($this->{$property->getName()})) {
-
                     $value = $this->{$property->getName()};
 
                     if ($value instanceof ExportableInterface) {

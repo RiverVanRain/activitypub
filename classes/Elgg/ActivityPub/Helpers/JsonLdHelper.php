@@ -1,29 +1,34 @@
 <?php
+
 namespace Elgg\ActivityPub\Helpers;
 
 use Elgg\ActivityPub\Types\Core\ObjectType;
 
-class JsonLdHelper {
+class JsonLdHelper
+{
     const CONTEXT = 'https://www.w3.org/ns/activitystreams';
 
     /**
      * Convienient to check if string in array or string is a match
      */
-    public static function equalsOrIncludes(string|array $haystack, string $needle): bool {
+    public static function equalsOrIncludes(string|array $haystack, string $needle): bool
+    {
         return is_array($haystack) ? in_array($needle, $haystack, true) : $haystack === $needle;
     }
 
     /**
      * Verifies if the provided context matches the context we support
      */
-    public static function isSupportedContext($json): bool {
+    public static function isSupportedContext($json): bool
+    {
         if (!isset($json['@context'])) {
             return false;
         }
         return static::equalsOrIncludes($json['@context'], static::CONTEXT);
     }
-	
-	public static function getValueOrId(string|null|ObjectType|array $value): ?string {
+
+    public static function getValueOrId(string|null|ObjectType|array $value): ?string
+    {
         if (is_string($value) || is_null($value)) {
             return $value;
         }
@@ -36,7 +41,8 @@ class JsonLdHelper {
     /**
      * Returns a domain from a uri
      */
-    public static function getDomainFromUri($uri): string {
+    public static function getDomainFromUri($uri): string
+    {
         $parsed = parse_url($uri);
         $host = $parsed['host'];
 

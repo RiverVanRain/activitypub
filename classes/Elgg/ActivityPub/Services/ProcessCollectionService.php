@@ -8,33 +8,36 @@ use Elgg\ActivityPub\Types\Actor\AbstractActorType;
 use Elgg\Traits\Di\ServiceFacade;
 
 // WIP
-class ProcessCollectionService {
-	use ServiceFacade;
+class ProcessCollectionService
+{
+    use ServiceFacade;
 
-	protected array $json;
+    protected array $json;
     protected AbstractActorType|string $actor;
 
     public function __construct(
-        protected ActivityFactory        $activityFactory,
+        protected ActivityFactory $activityFactory,
     ) {
-
     }
 
-    public function withJson(array $json): ProcessCollectionService {
+    public function withJson(array $json): ProcessCollectionService
+    {
         $instance = clone $this;
         $instance->json = $json;
         return $instance;
     }
 
-    public function withActor(AbstractActorType|string $actor): ProcessCollectionService {
+    public function withActor(AbstractActorType|string $actor): ProcessCollectionService
+    {
         $instance = clone $this;
         $instance->actor = $actor;
         return $instance;
     }
 
-    public function process(): void {
+    public function process(): void
+    {
         if (!isset($this->json)) {
-           throw new \Elgg\Exceptions\Http\BadRequestException(elgg_echo('activitypub:inbox:general:payload:empty', ['']));
+            throw new \Elgg\Exceptions\Http\BadRequestException(elgg_echo('activitypub:inbox:general:payload:empty', ['']));
         }
 
         if (!JsonLdHelper::isSupportedContext($this->json)) {
@@ -75,7 +78,8 @@ class ProcessCollectionService {
         }
     }
 
-    private function processItem(array $item): void {
+    private function processItem(array $item): void
+    {
         if (!is_array($item)) {
             elgg_log(elgg_echo('activitypub:process:collection:error'), \Psr\Log\LogLevel::ERROR);
             return;
@@ -87,30 +91,35 @@ class ProcessCollectionService {
             ->process();
     }
 
-    private function isActorDifferent(): bool {
+    private function isActorDifferent(): bool
+    {
         return isset($this->actor) && JsonLdHelper::getValueOrId($this->actor) !== JsonLdHelper::getValueOrId($this->actor);
     }
 
-    private function isActorBanned(): bool {
+    private function isActorBanned(): bool
+    {
         return (bool) elgg()->activityPubUtility->domainIsGlobalBlocked($this->actor);
     }
 
-    private function isActorLocal(): bool {
+    private function isActorLocal(): bool
+    {
         return (bool) elgg()->activityPubManager->isLocalUri($this->actor);
     }
-	
-	/**
-	 * Returns registered service name
-	 * @return string
-	 */
-	public static function name() {
-		return 'activityPubProcessCollection';
-	}
-	
-	/**
-	 * {@inheritdoc}
-	 */
-	public function __get($name) {
-		return $this->$name;
-	}
+
+    /**
+     * Returns registered service name
+     * @return string
+     */
+    public static function name()
+    {
+        return 'activityPubProcessCollection';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __get($name)
+    {
+        return $this->$name;
+    }
 }

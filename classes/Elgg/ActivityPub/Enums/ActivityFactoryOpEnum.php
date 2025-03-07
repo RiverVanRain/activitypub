@@ -1,7 +1,9 @@
 <?php
+
 namespace Elgg\ActivityPub\Enums;
 
-enum ActivityFactoryOpEnum {
+enum ActivityFactoryOpEnum
+{
     case CREATE;
     case UPDATE;
     case DELETE;

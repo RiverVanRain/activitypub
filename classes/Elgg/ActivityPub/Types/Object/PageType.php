@@ -1,11 +1,13 @@
 <?php
+
 namespace Elgg\ActivityPub\Types\Object;
 
 use Elgg\ActivityPub\Attributes\ExportProperty;
 use Elgg\ActivityPub\Types\Actor\PersonType;
 use Elgg\ActivityPub\Types\Core\ObjectType;
 
-class PageType extends ObjectType {
+class PageType extends ObjectType
+{
     #[ExportProperty]
     protected string $type = 'Page';
 

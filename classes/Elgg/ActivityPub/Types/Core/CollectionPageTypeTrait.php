@@ -1,9 +1,11 @@
 <?php
+
 namespace Elgg\ActivityPub\Types\Core;
 
 use Elgg\ActivityPub\Attributes\ExportProperty;
 
-trait CollectionPageTypeTrait {
+trait CollectionPageTypeTrait
+{
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-partOf
      */
