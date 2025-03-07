@@ -20,7 +20,7 @@ Inspired by [ActivityPub](https://www.drupal.org/project/activitypub) Drupal plu
 * Allow users to enable ActivityPub for their account
 * Enable ActivityPub for Groups
 * Allow or block domains from posting to inbox globally and/or per user/group
-* Outbox, Inbox, Following, Followers and Likes endpoints
+* Outbox, Inbox, Following, Followers and Liked endpoints
 * Map Activity types and properties to content types and create posts to send out to the Fediverse
 * Discovery via [WebFinger](https://webfinger.net) for locating app, user and group profiles
 * Signature verification for incoming activities

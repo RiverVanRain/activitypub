@@ -34,7 +34,7 @@ if ((bool) elgg_get_plugin_setting('remote_object_searchable', 'activitypub')) {
 return [
 	'plugin' => [
 		'name' => 'ActivityPub',
-		'version' => '0.1',
+		'version' => '0.2',
 		'dependencies' => [
 			'friends' => [
 				'position' => 'after',

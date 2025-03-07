@@ -83,12 +83,16 @@ if ($full_view) {
 } else {
 	// federated reply
 	if ((string) $comment->canonical_url) {
-		$params['subtitle'][] = elgg_echo('activitypub:post:federated:on', [
-			elgg_view('output/url', [
-				'text' => parse_url($comment->canonical_url, PHP_URL_HOST),
-				'href' => (string) $comment->canonical_url,
-			])
-		]);
+		$params['imprint'][] = [
+			'icon_name' => 'link',
+			'content' => elgg_echo('activitypub:post:federated:on', [
+				elgg_view('output/url', [
+					'text' => parse_url($comment->canonical_url, PHP_URL_HOST),
+					'href' => (string) $comment->canonical_url,
+				])
+			]),
+			'class' => 'elgg-listing-federated-link',
+		];
 	}
 	
 	$params['content'] = elgg_get_excerpt((string) $comment->description);
