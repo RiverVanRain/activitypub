@@ -20,7 +20,7 @@ Inspired by [ActivityPub](https://www.drupal.org/project/activitypub) Drupal plu
 * Allow users to enable ActivityPub for their account
 * Enable ActivityPub for Groups
 * Allow or block domains from posting to inbox globally and/or per user/group
-* Outbox, Inbox, Following, Followers and Liked endpoints
+* [Outbox](https://www.w3.org/TR/activitypub/#outbox), [Inbox](https://www.w3.org/TR/activitypub/#inbox), [Followers](https://www.w3.org/TR/activitypub/#followers), [Following](https://www.w3.org/TR/activitypub/#following) and [Liked](https://www.w3.org/TR/activitypub/#liked) endpoints
 * Map Activity types and properties to content types and create posts to send out to the Fediverse
 * Discovery via [WebFinger](https://webfinger.net) for locating app, user and group profiles
 * Signature verification for incoming activities
@@ -70,7 +70,7 @@ The plugin has been tested with the following federated platforms:
 
 * [Diaspora](https://diasporafoundation.org)
 * [Drupal](https://www.drupal.org/project/activitypub)
-* [Elgg](https://elgg.org)
+* [Elgg](https://elgg.org/plugins/3330966)
 * [Friendica](https://friendi.ca)
 * [Lemmy](https://join-lemmy.org)
 * [Mastodon](https://joinmastodon.org)
@@ -138,7 +138,7 @@ location ~ (^\.|/\.) {
 
 Use `composer require rivervanrain/activitypub` to get all dependencies.
 
-Activate `ActivityPub` plugin via admin `Dashboard`.
+Activate `ActivityPub` plugin on the `/admin/plugins` page.
 
 
 ## Configure plugin
@@ -167,7 +167,7 @@ If you follow this user, [Follow](https://www.w3.org/TR/activitypub/#follow-acti
 - Outbox: enable/disable *Send activities*
 - Inbox: enable/disable *Process incoming*
 
-This way you can configure your Elgg app as `Server-to-Client` or `Server-to-Server`.
+This way you can configure your Elgg app as [Client-to-Server](https://www.w3.org/TR/activitypub/#client-to-server-interactions) or [Server-to-Server](https://www.w3.org/TR/activitypub/#server-to-server-interactions) interaction.
 
 **Control domains:**
 
@@ -197,7 +197,7 @@ where `data` is your Elgg [data folder](https://learn.elgg.org/en/stable/intro/i
 
 ## Caching
 
-For incoming or outgoing requests, images needs to be fetched to get theinbox endpoint for example. 
+For incoming or outgoing requests, images needs to be fetched to get the Inbox endpoint for example. 
 
 This is saved in `/data/activitypub/cache/`,
 where `data` is your Elgg [data folder](https://learn.elgg.org/en/stable/intro/install.html#create-a-data-folder).
