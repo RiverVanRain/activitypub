@@ -35,7 +35,7 @@ if ((bool) elgg_get_plugin_setting('remote_object_searchable', 'activitypub')) {
 return [
     'plugin' => [
         'name' => 'ActivityPub',
-        'version' => '0.3',
+        'version' => '0.4',
         'dependencies' => [
             'friends' => [
                 'position' => 'after',
@@ -250,6 +250,12 @@ return [
             ],
             'menu:topbar' => [
                 \Elgg\ActivityPub\Menus\Topbar::class => [],
+            ],
+        ],
+        'sanitize' => [
+            'input' => [
+                \Elgg\Input\ValidateInputHandler::class => ['unregister' => true],
+                \Elgg\ActivityPub\Hooks\HtmlawedConfig::class => ['priority' => 1],
             ],
         ],
         'tool_options' => [
