@@ -101,7 +101,7 @@ You need to activate the following [bundled](https://learn.elgg.org/en/stable/pl
 
 **For Apache**
 
-Change these rules in .htaccess:
+Change this rule in .htaccess:
 
 ```
 RewriteRule "^.well-known/" - [L]
@@ -136,7 +136,7 @@ location ~ (^\.|/\.) {
 }
 ```
 
-Use `composer require rivervanrain/activitypub` to get all dependencies.
+See examples in the `/install/config` folder of this plugin.
 
 Activate `ActivityPub` plugin on the `/admin/plugins` page.
 
