@@ -99,6 +99,12 @@ You need to activate the following [bundled](https://learn.elgg.org/en/stable/pl
 
 ## Installation
 
+* You must have the required Elgg version installed.
+
+**Note**: Don't forget to [setup cron](https://learn.elgg.org/en/stable/intro/install.html#set-up-cron)!
+
+* Update server configurations:
+
 **For Apache**
 
 Change this rule in .htaccess:
@@ -138,7 +144,7 @@ location ~ (^\.|/\.) {
 
 See examples in the `/install/config` folder of this plugin.
 
-Activate `ActivityPub` plugin on the `/admin/plugins` page.
+* Activate `ActivityPub` plugin on the `/admin/plugins` page.
 
 
 ## Configure plugin
