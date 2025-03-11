@@ -22,7 +22,6 @@
     },
 	"require": {
 		"php": "^8.3",
-		"ext-json": "*",
 		"rivervanrain/activityphp": "dev-wzm",
 		"rivervanrain/http-signatures-php": "dev-wzm",
 		"pfefferle/openwebicons": "^1.6.3",

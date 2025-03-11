@@ -98,7 +98,14 @@ class ActivityPubUtility
      */
     public function getActivityPubActorImage(\ElggEntity $actor, string $type = 'icon', string $size = 'medium')
     {
-        if ($actor->hasIcon('master', $type)) {
+        $icon_type = match ($type) {
+            'icon' => 'master',
+            'cover' => 'master',
+	    'header' => 'header',
+            default => 'master'
+        };
+		
+	if ($actor->hasIcon($icon_type, $type)) {
             return $actor->getIconURL([
                 'type' => $type,
                 'size' => $size,
