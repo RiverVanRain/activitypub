@@ -635,7 +635,7 @@ class ActivityPubActivity extends \ElggObject
                 }
 
                 //cover
-                if ($image_url = elgg()->activityPubUtility->getActivityPubActorImage($entity, 'cover')) {
+                if ($image_url = elgg()->activityPubUtility->getActivityPubActorImage($entity, 'cover', 'large')) {
                     $image = [
                         'type' => 'Image',
                         'name' => (string) $entity->getDisplayName() ?? null,

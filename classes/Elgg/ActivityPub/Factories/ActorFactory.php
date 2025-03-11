@@ -200,7 +200,7 @@ class ActorFactory
             $data['icon'] = $image;
         }
 
-        if ($image_url = $activityPubUtility->getActivityPubActorImage($entity, 'cover')) {
+        if ($image_url = $activityPubUtility->getActivityPubActorImage($entity, 'cover', 'large')) {
             $image = [
                 'type' => 'Image',
                 'name' => (string) $entity->getDisplayName(),
@@ -209,7 +209,7 @@ class ActorFactory
             $data['image'] = $image;
         }
 
-        if ($image_url = $activityPubUtility->getActivityPubActorImage($entity, 'header')) {
+        if ($image_url = $activityPubUtility->getActivityPubActorImage($entity, 'header', 'header')) {
             $image = [
                 'type' => 'Image',
                 'name' => (string) $entity->getDisplayName(),
