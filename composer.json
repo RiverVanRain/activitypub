@@ -21,7 +21,6 @@
 		"optimize-autoloader": true
     },
 	"require": {
-		"php": "^8.3",
 		"rivervanrain/activityphp": "dev-wzm",
 		"rivervanrain/http-signatures-php": "dev-wzm",
 		"pfefferle/openwebicons": "^1.6.3",
