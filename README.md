@@ -6,10 +6,10 @@ ActivityPub integration for Elgg
 
 ## About
 
-Implements the [ActivityPub protocol](https://w3c.github.io/activitypub/) for your Elgg app, allowing members to communicate with each other. 
+Implements the **ActivityPub protocol** [1](https://en.wikipedia.org/wiki/ActivityPub), [2](https://activitypub.rocks), [3](https://w3c.github.io/activitypub) for your Elgg app, allowing members to communicate with each other. 
 Users will be able to follow content on Mastodon and other federated platforms that support ActivityPub. 
 
-With the ActivityPub plugin installed, your Elgg app itself function as a federated server in [Fediverse](https://en.wikipedia.org/wiki/Fediverse), along with profiles for each user and/or group. 
+With the ActivityPub plugin installed, your Elgg app itself function as a federated server in **Fediverse** [1](https://en.wikipedia.org/wiki/Fediverse), [2](https://www.britannica.com/technology/fediverse), along with profiles for each user and/or group. 
 
 For instance, if your Elgg app is `app.url`, then the app-wide profile can be found at `@app.url@app.url`, and users like Jane and Bob would have their individual profiles at `@jane@app.url` and `@bob@app.url`, respectively.
 
