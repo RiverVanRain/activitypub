@@ -23,12 +23,10 @@ class HtmlawedConfig
             // do not check for unique ids as the full input stack could be checked multiple times
             // @see https://github.com/Elgg/Elgg/issues/12934
             'unique_ids' => 0,
-            'elements' => '*-applet-button-form-input-textarea-script-style-embed-object+iframe+audio+video',
+            'elements' => '*-applet-button-form-input-textarea-script-style-embed-object+iframe+audio+video+(tiny-math-inline)+(tiny-math-block)+maction+math+maligngroup+malignmark+menclose+merror+mfenced+mfrac+mi+mmultiscripts+mn+mo+mover+mpadded+mphantom+mprescripts+mroot+mrow+ms+mspace+msqrt+mstyle+msub+msubsup+msup+mtable+mtd+mtext+mtr+munder+munderover+semantics+annotation+(annotation-xml)+mscarries+mscarry+msgroup+msline+msrow',
             'deny_attribute' => "on*, formaction",
             'hook_tag' => '_elgg_htmlawed_tag_post_processor',
             'schemes' => '*:http,https,ftp,news,mailto,rtsp,teamspeak,gopher,mms,callto,git,svn,rtmp,steam,nntp,sftp,ssh,tel,telnet,magnet,bitcoin,data',
-            // apparent this doesn't work.
-            // 'style:color,cursor,text-align,font-size,font-weight,font-style,border,margin,padding,float'
         ];
 
         // add nofollow to all links on output
