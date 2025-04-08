@@ -536,6 +536,7 @@ class ActivityPubActivity extends \ElggObject
                     ]);
                 }
 
+                //reply
                 if ($entity instanceof \ElggComment || $entity instanceof \ElggWire || $entity instanceof \wZm\River\Entity\River) {
                     $reply_to = [];
 
@@ -1828,6 +1829,11 @@ class ActivityPubActivity extends \ElggObject
                 $activity->content = (string) $this->getContent();
                 $activity->updated = date('c', time());
                 $activity->save();
+
+                // let others know about the updating
+                elgg_trigger_event_results('update', 'activitypub', [
+                    'entity' => $activity,
+                ], true);
             }
         }
 

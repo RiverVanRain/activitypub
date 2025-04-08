@@ -45,26 +45,63 @@ class OnObjectUpdate
         });
 
         if (!empty($entities)) {
-            $content = (string) $activity->getContent();
+            foreach ($entities as $entity) {
+                $payload = json_decode($activity->getPayload(), true);
 
-            if (!empty($content)) {
-                foreach ($entities as $entity) {
-                    if (is_callable('mb_convert_encoding')) {
-                        $description = mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8');
-                    } else {
-                        $description = $content;
-                    }
+                $summary = (string) $entity->excerpt ?? ' ';
 
-                    if (!empty((string) $entity->excerpt)) {
-                        $entity->excerpt = elgg_sanitize_input($description);
-                    }
-
-                    if (!empty((string) $entity->description)) {
-                        $entity->description = elgg_sanitize_input($description);
-                    }
-
-                    $entity->save();
+                if (!empty($payload['object']['summary'])) {
+                    $summary = (string) $payload['object']['summary'];
                 }
+
+                $content = (string) $entity->description ?? ' ';
+
+                if (!empty($payload['object']['content'])) {
+                    $content = $summary = (string) $payload['object']['content'];
+                }
+
+                if (is_callable('mb_convert_encoding')) {
+                    $excerpt = mb_convert_encoding($summary, 'HTML-ENTITIES', 'UTF-8');
+                    $description = mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8');
+                } else {
+                    $excerpt = $summary;
+                    $description = $content;
+                }
+
+                $entity->excerpt = elgg_sanitize_input($excerpt);
+                $entity->description = elgg_sanitize_input($description);
+
+                if (!empty($payload['object']['attachment'])) {
+                    $attachments = [];
+
+                    foreach ($payload['object']['attachment'] as $attachment) {
+                        if (!isset($attachment['type']) || !isset($attachment['url'])) {
+                            continue;
+                        }
+                        if (!in_array($attachment['type'], ['Audio', 'Document', 'Image', 'Video'], true)) {
+                            continue;
+                        }
+
+                        $title = !empty($attachment['name']) ? (string) $attachment['name'] : (string) $attachment['url'];
+
+                        $attachments[] = [
+                            'type' => (string) $attachment['type'],
+                            'mediaType' => !empty($attachment['mediaType']) ? (string) $attachment['mediaType'] : null,
+                            'url' => (string) $attachment['url'],
+                            'title' => $title,
+                            'width' => !empty($attachment['width']) ? (string) $attachment['width'] : null,
+                            'height' => !empty($attachment['height']) ? (string) $attachment['height'] : null,
+                        ];
+                    }
+
+                    if (!empty($attachments)) {
+                        $entity->attachments = elgg_view('activitypub/object/attachments', [
+                            'attachments' => $attachments,
+                        ]);
+                    }
+                }
+
+                $entity->save();
             }
         }
     }
