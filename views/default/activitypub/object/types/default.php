@@ -25,9 +25,9 @@ if (!empty($mediaType)) {
 echo match ($type) {
     'Image' => elgg_view('activitypub/object/types/image', [
         'url' => $url,
-        'title' => (string)elgg_extract('title', $vars, null),
-        'width' => (string)elgg_extract('width', $vars, null),
-        'height' => (string)elgg_extract('height', $vars, null),
+        'title' => (string) elgg_extract('title', $vars, null),
+        'width' => (string) elgg_extract('width', $vars, null),
+        'height' => (string) elgg_extract('height', $vars, null),
         'class' => 'mtm',
     ]),
     'Video' => elgg_view('activitypub/object/types/video', [

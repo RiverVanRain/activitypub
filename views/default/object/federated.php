@@ -26,6 +26,8 @@ $vars['imprint'][] = [
     'class' => 'elgg-listing-federated-link',
 ];
 
+$vars['attachments'] = (string) $entity->attachments ?? null;
+
 if (elgg_extract('full_view', $vars)) {
     $body = elgg_view('output/longtext', [
         'value' => (string) $entity->description,

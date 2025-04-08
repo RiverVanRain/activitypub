@@ -28,15 +28,12 @@ class OnRiverCreate
         $object->external_id = (string) $item['id'];
         $object->canonical_url = (string) $item['canonical_url'];
 
-        $object->status = 'published';
-        $object->published_status = 'published';
-
         if (!empty($item['reply'])) {
             $object->reply_on = $item['reply'];
         }
 
         if (!empty($item['attachments'])) {
-            $description = (string) $object->description;
+            $attachments = [];
 
             foreach ($item['attachments'] as $attachment) {
                 if (!isset($attachment['type']) || !isset($attachment['url'])) {
@@ -46,26 +43,27 @@ class OnRiverCreate
                     continue;
                 }
 
-                $title = (string) $attachment['url'];
+                $title = !empty($attachment['name']) ? (string) $attachment['name'] : (string) $attachment['url'];
 
-                if (!empty($attachment['name'])) {
-                    $title = (string) $attachment['name'];
-                }
-
-                $description .= elgg_view('activitypub/object/attachments', [
-                    'attachments' => [
-                        'type' => (string) $attachment['type'],
-                        'mediaType' => !empty($attachment['mediaType']) ? (string) $attachment['mediaType'] : null,
-                        'url' => (string) $attachment['url'],
-                        'title' => $title,
-                        'width' => !empty($attachment['width']) ? (string) $attachment['width'] : null,
-                        'height' => !empty($attachment['height']) ? (string) $attachment['height'] : null,
-                    ]
-                ]);
+                $attachments[] = [
+                    'type' => (string) $attachment['type'],
+                    'mediaType' => !empty($attachment['mediaType']) ? (string) $attachment['mediaType'] : null,
+                    'url' => (string) $attachment['url'],
+                    'title' => $title,
+                    'width' => !empty($attachment['width']) ? (string) $attachment['width'] : null,
+                    'height' => !empty($attachment['height']) ? (string) $attachment['height'] : null,
+                ];
             }
 
-            $object->description = (string) $description;
+            if (!empty($attachments)) {
+                $object->attachments = elgg_view('activitypub/object/attachments', [
+                    'attachments' => $attachments,
+                ]);
+            }
         }
+
+        $object->status = 'published';
+        $object->published_status = 'published';
 
         if (!$object->save()) {
             if ((bool) elgg_get_plugin_setting('log_general_inbox_error', 'activitypub')) {

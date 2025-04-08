@@ -15,5 +15,6 @@ if (!$object instanceof \Elgg\ActivityPub\Entity\FederatedObject) {
 }
 
 $vars['message'] = (string) $object->excerpt;
+$vars['attachments'] = (string) $object->attachments ?? null;
 
 echo elgg_view('river/elements/layout', $vars);

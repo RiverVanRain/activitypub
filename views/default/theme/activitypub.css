@@ -2,19 +2,6 @@
     margin-top: 1rem;
     padding: .5rem 0 0;
     border: none;
-
-    .activitypub-attachments-gallery {
-        max-width: 100%;
-
-         .elgg-item {
-            img {
-                width: auto;
-                max-height: 500px;
-                max-width: 100%;
-            }
-
-         }
-    }
 }
 
 .activitypub-search-results-item {
@@ -22,6 +9,19 @@
         .elgg-menu-activitypub-follow-container,
         .elgg-menu-activitypub-join-container {
             float: right;
+        }
+    }
+}
+
+.activitypub-attachments-gallery {
+    max-width: 100%;
+    list-style-type: none !important;
+
+    .elgg-item {
+        img {
+            width: auto;
+            max-height: 500px;
+            max-width: 100%;
         }
     }
 }

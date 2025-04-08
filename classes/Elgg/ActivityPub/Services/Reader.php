@@ -436,13 +436,13 @@ class Reader
 
         $object->title = elgg_sanitize_input(elgg_echo('activitypub:post:federated', [(string) $user->getDisplayName()]));
 
-        $summary = null;
+        $summary = ' ';
 
         if (!empty($item['summary'])) {
             $summary = (string) $item['summary'];
         }
 
-        $content = null;
+        $content = ' ';
 
         if (!empty($item['content'])) {
             $content = $summary = (string) $item['content'];
@@ -459,9 +459,6 @@ class Reader
         $object->excerpt = elgg_sanitize_input($excerpt);
         $object->description = elgg_sanitize_input($description);
 
-        $object->status = 'published';
-        $object->published_status = 'published';
-
         if (!empty($item['reply'])) {
             $object->reply_on = $item['reply'];
         }
@@ -469,7 +466,7 @@ class Reader
         $object->source = FederatedEntitySourcesEnum::ACTIVITY_PUB;
 
         if (!empty($item['attachments'])) {
-            $description = (string) $object->description;
+            $attachments = [];
 
             foreach ($item['attachments'] as $attachment) {
                 if (!isset($attachment['type']) || !isset($attachment['url'])) {
@@ -479,26 +476,27 @@ class Reader
                     continue;
                 }
 
-                $title = (string) $attachment['url'];
+                $title = !empty($attachment['name']) ? (string) $attachment['name'] : (string) $attachment['url'];
 
-                if (!empty($attachment['name'])) {
-                    $title = (string) $attachment['name'];
-                }
-
-                $description .= elgg_view('activitypub/object/attachments', [
-                    'attachments' => [
-                        'type' => (string) $attachment['type'],
-                        'mediaType' => !empty($attachment['mediaType']) ? (string) $attachment['mediaType'] : null,
-                        'url' => (string) $attachment['url'],
-                        'title' => $title,
-                        'width' => !empty($attachment['width']) ? (string) $attachment['width'] : null,
-                        'height' => !empty($attachment['height']) ? (string) $attachment['height'] : null,
-                    ]
-                ]);
+                $attachments[] = [
+                    'type' => (string) $attachment['type'],
+                    'mediaType' => !empty($attachment['mediaType']) ? (string) $attachment['mediaType'] : null,
+                    'url' => (string) $attachment['url'],
+                    'title' => $title,
+                    'width' => !empty($attachment['width']) ? (string) $attachment['width'] : null,
+                    'height' => !empty($attachment['height']) ? (string) $attachment['height'] : null,
+                ];
             }
 
-            $object->description = (string) $description;
+            if (!empty($attachments)) {
+                $object->attachments = elgg_view('activitypub/object/attachments', [
+                    'attachments' => $attachments,
+                ]);
+            }
         }
+
+        $object->status = 'published';
+        $object->published_status = 'published';
 
         // save object
         if (!(bool) $object->save()) {
@@ -568,13 +566,13 @@ class Reader
         $comment->canonical_url = (string) $item['canonical_url'];
         $comment->title = elgg_sanitize_input(elgg_echo('activitypub:reply:by', [(string) $user->getDisplayName()]));
 
-        $summary = null;
+        $summary = ' ';
 
         if (!empty($item['summary'])) {
             $summary = (string) $item['summary'];
         }
 
-        $content = null;
+        $content = ' ';
 
         if (!empty($item['content'])) {
             $content = $summary = (string) $item['content'];
@@ -591,9 +589,6 @@ class Reader
         $comment->excerpt = elgg_sanitize_input($excerpt);
         $comment->description = elgg_sanitize_input($description);
 
-        $comment->status = 'published';
-        $comment->published_status = 'published';
-
         if (!empty($item['reply'])) {
             $comment->reply_on = $item['reply'];
         }
@@ -608,7 +603,7 @@ class Reader
         }
 
         if (!empty($item['attachments'])) {
-            $description = (string) $comment->description;
+            $attachments = [];
 
             foreach ($item['attachments'] as $attachment) {
                 if (!isset($attachment['type']) || !isset($attachment['url'])) {
@@ -618,26 +613,27 @@ class Reader
                     continue;
                 }
 
-                $title = (string) $attachment['url'];
+                $title = !empty($attachment['name']) ? (string) $attachment['name'] : (string) $attachment['url'];
 
-                if (!empty($attachment['name'])) {
-                    $title = (string) $attachment['name'];
-                }
-
-                $description .= elgg_view('activitypub/object/attachments', [
-                    'attachments' => [
-                        'type' => (string) $attachment['type'],
-                        'mediaType' => !empty($attachment['mediaType']) ? (string) $attachment['mediaType'] : null,
-                        'url' => (string) $attachment['url'],
-                        'title' => $title,
-                        'width' => !empty($attachment['width']) ? (string) $attachment['width'] : null,
-                        'height' => !empty($attachment['height']) ? (string) $attachment['height'] : null,
-                    ]
-                ]);
+                $attachments[] = [
+                    'type' => (string) $attachment['type'],
+                    'mediaType' => !empty($attachment['mediaType']) ? (string) $attachment['mediaType'] : null,
+                    'url' => (string) $attachment['url'],
+                    'title' => $title,
+                    'width' => !empty($attachment['width']) ? (string) $attachment['width'] : null,
+                    'height' => !empty($attachment['height']) ? (string) $attachment['height'] : null,
+                ];
             }
 
-            $comment->description = (string) $description;
+            if (!empty($attachments)) {
+                $comment->attachments = elgg_view('activitypub/object/attachments', [
+                    'attachments' => $attachments,
+                ]);
+            }
         }
+
+        $comment->status = 'published';
+        $comment->published_status = 'published';
 
         // save comment
         if (!(bool) $comment->save()) {
@@ -655,6 +651,7 @@ class Reader
             'action_type' => 'comment',
             'object_guid' => (int) $comment->guid,
             'target_guid' => (int) $object->guid,
+            'posted' => (int) $comment->time_created,
         ]);
 
         elgg_trigger_event('publish', 'object', $comment);

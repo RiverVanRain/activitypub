@@ -14,7 +14,7 @@ $entity = get_entity($guid);
 
 elgg_push_entity_breadcrumbs($entity);
 
-echo elgg_view_page($entity->getDisplayName(), [
+echo elgg_view_page((string) $entity->getDisplayName(), [
     'content' => elgg_view_entity($entity, [
         'full_view' => true,
         'show_responses' => true,

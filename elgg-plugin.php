@@ -104,6 +104,12 @@ return [
                 'commentable' => true,
                 'likable' => true,
                 'searchable' => $remote_object_searchable,
+                'uses:river' => true,
+                'uses:favorites' => true,
+                'uses:share' => true,
+                'uses:autosave' => false,
+                'allow_attachments' => false,
+                'uses:translation' => true,
             ],
         ],
     ],
@@ -269,9 +275,15 @@ return [
             ],
             'object' => [
                 \Elgg\ActivityPub\Events\Objects\OnObjectEdit::class => [],
+
+            ],
+        ],
+        'update' => [
+            'activitypub' => [
                 \Elgg\ActivityPub\Events\Objects\OnObjectUpdate::class => [],
             ],
         ],
+
     ],
 
     //ROUTES

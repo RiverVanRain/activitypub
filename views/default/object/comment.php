@@ -24,6 +24,8 @@ if ($comment->canEdit()) {
     elgg_import_esm('elgg/comments');
 }
 
+$vars['attachments'] = (string) $comment->attachments ?? null;
+
 $params = [
     'icon_entity' => $commenter,
     'time_href' => $comment->getURL(),
