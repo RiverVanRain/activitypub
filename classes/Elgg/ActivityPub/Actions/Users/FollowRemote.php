@@ -18,7 +18,7 @@ class FollowRemote
 
         $remote_friend = (string) $request->getParam('remote_friend');
 
-        if (!$remote_friend || !(bool) elgg_get_plugin_setting('enable_activitypub', 'activitypub') || !(bool) $actor->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $actor->activitypub_actor) {
+        if (!$remote_friend || !(bool) elgg()->activityPubUtility->isEnabledUser($actor)) {
             return elgg_error_response(elgg_echo('activitypub:user:follow:error:object'));
         }
 

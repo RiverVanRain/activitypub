@@ -3,7 +3,7 @@
 $guid = (int) elgg_extract('guid', $vars);
 
 $group = get_entity($guid);
-if (!$group instanceof \ElggGroup || !(bool) $group->activitypub_enable || !(bool) $group->activitypub_actor) {
+if (!$group instanceof \ElggGroup || !(bool) elgg()->activityPubUtility->isEnabledGroup($group)) {
     return;
 }
 

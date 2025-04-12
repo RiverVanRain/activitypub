@@ -19,11 +19,11 @@ class FollowingController
             throw new \Elgg\Exceptions\Http\PageNotFoundException();
         }
 
-        if ($entity instanceof \ElggUser && (!(bool) $entity->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $entity->activitypub_actor)) {
+        if ($entity instanceof \ElggUser && !(bool) elgg()->activityPubUtility->isEnabledUser($entity)) {
             throw new \Elgg\Exceptions\Http\PageNotFoundException();
         }
 
-        if ($entity instanceof \ElggGroup && (!(bool) $entity->activitypub_enable || !(bool) $entity->activitypub_actor)) {
+        if ($entity instanceof \ElggGroup && !(bool) elgg()->activityPubUtility->isEnabledGroup($entity)) {
             throw new \Elgg\Exceptions\Http\PageNotFoundException();
         }
 

@@ -97,9 +97,9 @@ abstract class AbstractActorType extends AbstractType
         $this->contexts[] = 'https://www.w3.org/ns/did/v1';
         $this->contexts[] = 'https://purl.archive.org/socialweb/webfinger';
         $this->contexts[] = [
-            'schema' => 'http://schema.org#',
+            'schema' => 'https://schema.org#',
             'ostatus' => 'http://ostatus.org#',
-            'toot' => 'http://joinmastodon.org/ns#',
+            'toot' => 'https://joinmastodon.org/ns#',
             'lemmy' => 'https://join-lemmy.org/ns#',
             'misskey' => 'https://misskey-hub.net/ns#',
             'vcard' => 'http://www.w3.org/2006/vcard/ns#',
@@ -109,7 +109,7 @@ abstract class AbstractActorType extends AbstractType
             'pt' => 'https://joinpeertube.org/ns#',
             'sm' => 'http://smithereen.software/ns#',
             'mitra' => 'http://jsonld.mitra.social#',
-            'sc' => 'http://schema.org/',
+            'sc' => 'https://schema.org/',
             'PropertyValue' => 'schema:PropertyValue',
             'value' => 'schema:value',
             'Hashtag' => 'as:Hashtag',

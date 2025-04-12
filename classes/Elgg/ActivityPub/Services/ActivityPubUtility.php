@@ -14,6 +14,7 @@ class ActivityPubUtility
 
     /**
      * Returns registered service name
+     *
      * @return string
      */
     public static function name()
@@ -27,6 +28,34 @@ class ActivityPubUtility
     public function __get($name)
     {
         return $this->$name;
+    }
+
+    /**
+     * Checks if the user has enabled ActivityPub
+     *
+     * @return bool
+     */
+    public function isEnabledUser(\ElggUser $entity): bool
+    {
+        if (!(bool) elgg_get_plugin_setting('enable_activitypub', 'activitypub') || !(bool) $entity->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $entity->activitypub_actor) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the group has enabled ActivityPub
+     *
+     * @return bool
+     */
+    public function isEnabledGroup(\ElggGroup $entity): bool
+    {
+        if (!elgg_is_active_plugin('groups') || !(bool) elgg_get_plugin_setting('enable_group', 'activitypub') || !(bool) $entity->activitypub_enable || !(bool) $entity->activitypub_actor) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -71,7 +71,7 @@ class Entity
         }
 
         $user = $event->getEntityParam();
-        if (!$user instanceof \ElggUser || !(bool) $user->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $user->activitypub_actor) {
+        if (!$user instanceof \ElggUser || !(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
             return null;
         }
 
@@ -107,7 +107,7 @@ class Entity
         }
 
         $group = $event->getEntityParam();
-        if (!$group instanceof \ElggGroup || !(bool) $group->activitypub_enable || !(bool) $group->activitypub_actor) {
+        if (!$group instanceof \ElggGroup || !(bool) elgg()->activityPubUtility->isEnabledGroup($group)) {
             return null;
         }
 

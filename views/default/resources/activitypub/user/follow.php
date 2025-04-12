@@ -7,7 +7,7 @@ if (!(bool) elgg_get_plugin_setting('enable_activitypub', 'activitypub')) {
 $guid = (int) elgg_extract('guid', $vars);
 
 $user = get_user($guid);
-if (!$user || !(bool) $user->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $user->activitypub_actor) {
+if (!$user || !(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
     return;
 }
 

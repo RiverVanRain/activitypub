@@ -26,11 +26,7 @@ class Follow
         }
 
         $user = $event->getEntityParam();
-        if (!$user instanceof \ElggUser) {
-            return null;
-        }
-
-        if ((!(bool) elgg_get_plugin_setting('enable_activitypub', 'activitypub') || !(bool) $user->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $user->activitypub_actor)) {
+        if (!$user instanceof \ElggUser || !(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
             return null;
         }
 

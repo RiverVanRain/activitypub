@@ -25,11 +25,7 @@ class FollowerSynchronization
     {
         $user = $request->getEntityParam();
 
-        if (!$user instanceof \ElggUser) {
-            throw new \Elgg\Exceptions\Http\PageNotFoundException();
-        }
-
-        if (!(bool) $user->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $user->activitypub_actor) {
+        if (!$user instanceof \ElggUser || !(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
             throw new \Elgg\Exceptions\Http\PageNotFoundException();
         }
 

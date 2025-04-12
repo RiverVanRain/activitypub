@@ -44,7 +44,7 @@ class InteractionsController
 
         $actor = elgg_get_logged_in_user_entity();
 
-        if (!(bool) elgg_get_plugin_setting('enable_activitypub', 'activitypub') || !(bool) $actor->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $actor->activitypub_actor) {
+        if (!(bool) elgg()->activityPubUtility->isEnabledUser($actor)) {
             return elgg_error_response(elgg_echo('activitypub:interactions:no_valid'));
         }
 

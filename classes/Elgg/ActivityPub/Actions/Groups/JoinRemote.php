@@ -18,7 +18,7 @@ class JoinRemote
 
         $remote_group = (string) $request->getParam('remote_group');
 
-        if (!$remote_group || !(bool) elgg_get_plugin_setting('enable_activitypub', 'activitypub') || !(bool) $actor->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $actor->activitypub_actor) {
+        if (!$remote_group || !(bool) elgg()->activityPubUtility->isEnabledUser($actor)) {
             return elgg_error_response(elgg_echo('activitypub:group:join:error:object'));
         }
 

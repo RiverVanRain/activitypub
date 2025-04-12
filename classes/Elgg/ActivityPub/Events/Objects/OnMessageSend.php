@@ -33,7 +33,7 @@ class OnMessageSend
                 return;
             }
 
-            if (!$user->isAdmin() && (!(bool) $user->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $user->activitypub_actor)) {
+            if (!$user->isAdmin() && !(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
                 return;
             }
 

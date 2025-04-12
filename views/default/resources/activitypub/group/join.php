@@ -7,7 +7,7 @@ if (!(bool) elgg_get_plugin_setting('enable_group', 'activitypub')) {
 $guid = (int) elgg_extract('guid', $vars);
 
 $group = get_entity($guid);
-if (!$group instanceof \ElggGroup || !(bool) $group->activitypub_enable || !(bool) $group->activitypub_actor) {
+if (!$group instanceof \ElggGroup || !(bool) elgg()->activityPubUtility->isEnabledGroup($group)) {
     throw new \Elgg\Exceptions\Http\EntityPermissionsException();
 }
 

@@ -43,13 +43,13 @@ class OnObjectEdit
             return;
         }
 
-        if (!$user->isAdmin() && (!(bool) $user->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $user->activitypub_actor)) {
+        if (!$user->isAdmin() && !(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
             return;
         }
 
         $group = $entity->getContainerEntity();
 
-        if ($group instanceof \ElggGroup && (!elgg_is_active_plugin('groups') || !(bool) elgg_get_plugin_setting('enable_group', 'activitypub') || (!(bool) $group->activitypub_enable || !(bool) $group->activitypub_actor))) {
+        if ($group instanceof \ElggGroup && !(bool) elgg()->activityPubUtility->isEnabledGroup($group)) {
             return;
         }
 

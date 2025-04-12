@@ -6,7 +6,7 @@ if (!(bool) elgg_get_plugin_setting('resolve_remote', 'activitypub')) {
 
 $user = elgg_get_logged_in_user_entity();
 
-if (!(bool) elgg_get_plugin_setting('enable_activitypub', 'activitypub') || !(bool) $user->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $user->activitypub_actor) {
+if (!(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
     throw new \Elgg\Exceptions\Http\EntityPermissionsException();
 }
 

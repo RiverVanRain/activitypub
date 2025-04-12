@@ -20,7 +20,7 @@ class Follow
 
         $local_actor = (string) $request->getParam('local_actor');
 
-        if (!$local_actor || !$user instanceof \ElggUser || !(bool) $user->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $user->activitypub_actor) {
+        if (!$local_actor || !$user instanceof \ElggUser || !(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
             return elgg_error_response(elgg_echo('activitypub:user:follow:error:local_actor'));
         }
 

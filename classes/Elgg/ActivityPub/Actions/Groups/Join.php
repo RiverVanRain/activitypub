@@ -20,7 +20,7 @@ class Join
 
         $local_actor = (string) $request->getParam('local_actor');
 
-        if (!$local_actor || !$group instanceof \ElggGroup || !(bool) $group->activitypub_enable || !(bool) $group->activitypub_actor) {
+        if (!$local_actor || !$group instanceof \ElggGroup || !(bool) elgg()->activityPubUtility->isEnabledGroup($group)) {
             return elgg_error_response(elgg_echo('activitypub:group:join:error:local_actor'));
         }
 

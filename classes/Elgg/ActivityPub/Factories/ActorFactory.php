@@ -110,11 +110,11 @@ class ActorFactory
             throw new NotImplementedException();
         }
 
-        if ($entity instanceof \ElggUser && (!(bool) elgg_get_plugin_setting('enable_activitypub', 'activitypub') || !(bool) $entity->getPluginSetting('activitypub', 'enable_activitypub') || !(bool) $entity->activitypub_actor)) {
+        if ($entity instanceof \ElggUser && !(bool) elgg()->activityPubUtility->isEnabledUser($entity)) {
             throw new PageNotFoundException();
         }
 
-        if ($entity instanceof \ElggGroup && (!elgg_is_active_plugin('groups') || !(bool) elgg_get_plugin_setting('enable_group', 'activitypub') || !(bool) $entity->activitypub_enable || !(bool) $entity->activitypub_actor)) {
+        if ($entity instanceof \ElggGroup && !(bool) elgg()->activityPubUtility->isEnabledGroup($entity)) {
             throw new PageNotFoundException();
         }
 
