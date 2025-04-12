@@ -17,5 +17,5 @@ class PageType extends ObjectType
      * Non-standard quote post field
      * TODO: Do proper schema validation for this property
      */
-    public string $quoteUri;
+    public ?string $quoteUri;
 }

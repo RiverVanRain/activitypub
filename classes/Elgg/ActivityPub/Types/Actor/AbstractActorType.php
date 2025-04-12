@@ -14,6 +14,9 @@ use Elgg\ActivityPub\Types\Object\ImageType;
 abstract class AbstractActorType extends AbstractType
 {
     #[ExportProperty]
+    protected string $type;
+
+    #[ExportProperty]
     public string $id;
 
     #[ExportProperty]

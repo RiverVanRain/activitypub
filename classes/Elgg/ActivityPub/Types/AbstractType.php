@@ -34,9 +34,36 @@ abstract class AbstractType implements ExportableInterface
      */
     public function export(array $extras = []): array
     {
-        $export = [ ];
+        $export = [];
 
         $reflection = new ReflectionClass($this);
+
+        // Get the parent class reflection if it exists
+        if ($parentClass = $reflection->getParentClass()) {
+            // Export properties from the parent class first
+            $parentProperties = $parentClass->getProperties();
+            foreach ($parentProperties as $property) {
+                $attributes = $property->getAttributes();
+                foreach ($attributes as $attribute) {
+                    if ($attribute->getName() === ExportProperty::class && isset($this->{$property->getName()})) {
+                        $value = $this->{$property->getName()};
+                        if ($value instanceof ExportableInterface) {
+                            $value = $value->export();
+                        }
+                        if (is_array($value)) {
+                            foreach ($value as $k => $v) {
+                                if ($v instanceof ExportableInterface) {
+                                    $value[$k] = $v->export();
+                                }
+                            }
+                        }
+                        $export[$property->getName()] = $value;
+                    }
+                }
+            }
+        }
+
+        // Export properties from the current class
         $properties = $reflection->getProperties();
 
         foreach ($properties as $property) {
