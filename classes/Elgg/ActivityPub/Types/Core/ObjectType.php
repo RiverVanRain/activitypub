@@ -6,6 +6,7 @@ use Elgg\ActivityPub\Attributes\ExportProperty;
 use Elgg\ActivityPub\Types\AbstractType;
 use Elgg\ActivityPub\Types\Core\SourceType;
 use Elgg\ActivityPub\Types\Object\ImageType;
+use Elgg\ActivityPub\Types\Object\PlaceType;
 
 class ObjectType extends AbstractType
 {
@@ -19,37 +20,73 @@ class ObjectType extends AbstractType
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-name
      */
     #[ExportProperty]
-    public string $name;
+    public string|null $name;
+
+    /**
+     * The name MAY be expressed using multiple language-tagged values.
+     *
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-name
+     */
+    #[ExportProperty]
+    public array|null $nameMap;
 
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-content
      */
     #[ExportProperty]
-    public string $content;
+    public string|null $content;
+
+    /**
+     * The content MAY be expressed using multiple language-tagged values.
+     *
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-content
+     */
+    #[ExportProperty]
+    public array|null $contentMap;
 
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-summary
      */
     #[ExportProperty]
-    public string $summary;
+    public string|null $summary;
 
     /**
-     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-attributedTo
+     * The content MAY be expressed using multiple language-tagged values.
+     *
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-summary
      */
     #[ExportProperty]
-    public string $attributedTo;
+    public array|null $summaryMap;
+
+    /**
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-attributedto
+     */
+    #[ExportProperty]
+    public string|null $attributedTo;
 
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-published
      */
     #[ExportProperty]
-    public string $published;
+    public string|null $published;
 
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-updated
      */
     #[ExportProperty]
-    public string $updated;
+    public string|null $updated;
+
+    /**
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-starttime
+     */
+    #[ExportProperty]
+    public string|null $startTime;
+
+    /**
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-endtime
+     */
+    #[ExportProperty]
+    public string|null $endTime;
 
     /**
      * @param string|LinkType[]
@@ -63,17 +100,30 @@ class ObjectType extends AbstractType
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-to
      */
     #[ExportProperty]
-    public array $to;
+    public string|array|null $to;
+
+    /**
+     * @param string[]
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-bto
+     */
+    #[ExportProperty]
+    public string|array|null $bto;
 
     /**
      * @param string[]
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-cc
      */
     #[ExportProperty]
-    public array $cc;
+    public string|array|null $cc;
 
     /**
      * @param string[]
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-bcc
+     */
+    #[ExportProperty]
+    public string|array|null $bcc;
+
+    /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-sensitive
      */
     #[ExportProperty]
@@ -111,16 +161,34 @@ class ObjectType extends AbstractType
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-inreplyto
      */
     #[ExportProperty]
-    public string $inReplyTo;
+    public string|null $inReplyTo;
 
     /**
-     * @see https://www.w3.org/TR/activitypub/#x3-3-the-source-property
+     * @see https://www.w3.org/TR/activitypub/#the-source-property
      */
     #[ExportProperty]
     public SourceType $source;
 
+    /**
+     * @param LinkType|LinkType[]
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-replies
+     */
     #[ExportProperty]
-    public string $_misskey_summary;
+    public string|array|null $replies;
+
+    /**
+     * @param LinkType|LinkType[]
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-likes
+     */
+    #[ExportProperty]
+    public array $likes;
+
+    /**
+     * @param LinkType|LinkType[]
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-shares
+     */
+    #[ExportProperty]
+    public array $shares;
 
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-icon
@@ -138,7 +206,7 @@ class ObjectType extends AbstractType
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-mediaType
      */
     #[ExportProperty]
-    public string $mediaType;
+    public string|null $mediaType;
 
     /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-width
@@ -152,11 +220,35 @@ class ObjectType extends AbstractType
     #[ExportProperty]
     public int $height;
 
-     /**
+    /**
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-duration
+     */
+    #[ExportProperty]
+    public string|null $duration;
+
+    /**
      * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-quoteUri
      */
     #[ExportProperty]
-    public string $quoteUri;
+    public string|null $quoteUri;
+
+    /**
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-preview
+     */
+    #[ExportProperty]
+    public string|null $preview;
+
+    /**
+     * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-location
+     */
+    #[ExportProperty]
+    public PlaceType $location;
+
+    /**
+     * @see https://misskey-hub.net/en/docs/
+     */
+    #[ExportProperty]
+    public string $_misskey_summary;
 
     /**
      * Sets the ID (must be a string)
@@ -178,9 +270,9 @@ class ObjectType extends AbstractType
     public function __construct()
     {
         $this->contexts[] = [
-            'schema' => 'http://schema.org#',
+            'schema' => 'https://schema.org#',
             'ostatus' => 'http://ostatus.org#',
-            'toot' => 'http://joinmastodon.org/ns#',
+            'toot' => 'https://joinmastodon.org/ns#',
             'lemmy' => 'https://join-lemmy.org/ns#',
             'misskey' => 'https://misskey-hub.net/ns#',
             'vcard' => 'http://www.w3.org/2006/vcard/ns#',
@@ -190,7 +282,7 @@ class ObjectType extends AbstractType
             'pt' => 'https://joinpeertube.org/ns#',
             'sm' => 'http://smithereen.software/ns#',
             'mitra' => 'http://jsonld.mitra.social#',
-            'sc' => 'http://schema.org/',
+            'sc' => 'https://schema.org/',
             'PropertyValue' => 'schema:PropertyValue',
             'value' => 'schema:value',
             'Hashtag' => 'as:Hashtag',
@@ -204,6 +296,7 @@ class ObjectType extends AbstractType
                 '@id' => 'lemmy:moderators',
                 '@type' => '@id',
             ],
+            'commentsEnabled' => 'pt:commentsEnabled',
             'playlists' => [
                 '@id' => 'pt:playlists',
                 '@type' => '@id',

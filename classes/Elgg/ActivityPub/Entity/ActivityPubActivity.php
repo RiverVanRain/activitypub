@@ -461,8 +461,8 @@ class ActivityPubActivity extends \ElggObject
                                 'audio' => 'Audio',
                                 default => 'Document'
                             },
-                            'name' => $file->getDisplayName(),
-                            'url' => $file->getDownloadURL(false),
+                            'name' => (string) $file->getDisplayName(),
+                            'url' => (string) $file->getDownloadURL(false),
                             'mediaType' => $mimetype,
                         ];
 
@@ -501,6 +501,10 @@ class ActivityPubActivity extends \ElggObject
                     'content' => $content,
                     'summary' => $summary,
                     'published' => date('c', (int) $entity->time_created),
+                    'attributedTo' => $this->getActor(),
+                    'url' => (string) $entity->getURL(),
+                    'sensitive' => false,
+                    'mediaType' => 'text/html',
                 ];
 
                 $object['to'] = $object['cc'] = $object['target'] = $object['audience'] = [];
@@ -509,10 +513,9 @@ class ActivityPubActivity extends \ElggObject
                     $object['updated'] = (string) $this->updated;
                 }
 
-                $object['attributedTo'] = $this->getActor();
-                $object['url'] = (string) $entity->getURL();
-                $object['sensitive'] = false;
-                $object['attachment'] = $attachments;
+                if (!empty($attachments)) {
+                    $object['attachment'] = $attachments;
+                }
 
                 //audience
                 $owner = $entity->getOwnerEntity();
@@ -659,6 +662,106 @@ class ActivityPubActivity extends \ElggObject
                 $cc = array_unique($object['cc']);
                 $target = array_unique($object['target']);
                 $audience = isset($object['target']) ? $object['audience'] : [];
+
+                //Event
+                if ($entity instanceof \Event) {
+                    $object['summary'] = $entity->getExcerpt();
+                    $object['startTime'] = $entity->getStartDate();
+                    $object['endTime'] = $entity->getEndDate();
+
+                    //location
+                    // WIP - change for ElggTheme
+                    if (isset($entity->location) || isset($entity->{'geo:lat'}) || isset($entity->{'geo:long'})) {
+                        $location = [
+                            'type' => 'Place',
+                            'name' => (string) $entity->venue ?? null,
+                            'address' => (string) $entity->location ?? null,
+                            'latitude' => (string) $entity->getLatitude() ?? null,
+                            'longitude' => (string) $entity->getLongitude() ?? null,
+                        ];
+                        $object['location'] = $location;
+                    }
+
+                    //attachments
+                    $attachments = [];
+
+                    $files = $entity->getFiles();
+
+                    if (!empty($files)) {
+                        $elggfile = new \ElggFile();
+                        $elggfile->owner_guid = (int) $entity->guid;
+
+                        foreach ($files as $file) {
+                            $elggfile->setFilename($file->file);
+
+                            if (!$elggfile->exists()) {
+                                // check old storage location
+                                $elggfile->setFilename("files/{$file->file}");
+                            }
+
+                            $mimetype = $file->mime;
+                            $basetype = substr($mimetype, 0, strpos($mimetype, '/'));
+
+                            $attachment = [
+                                'type' => match ($basetype) {
+                                    'image' => 'Image',
+                                    'video' => 'Video',
+                                    'audio' => 'Audio',
+                                    default => 'Document'
+                                },
+                                'name' => (string) $file->title,
+                                'url' => (string) $elggfile->getDownloadURL(false),
+                                'mediaType' => $mimetype,
+                            ];
+
+                            $attachments[] = $attachment;
+                        }
+                    }
+
+                    if (!empty($attachments)) {
+                        $object['attachment'] = $attachments;
+                    }
+
+                    $contacts = [];
+
+                    if (isset($entity->contact_guids)) {
+                        $contact_guids = $entity->contact_guids;
+
+                        if (!is_array($contact_guids)) {
+                            $contact_guids = [$contact_guids];
+                        }
+
+                        foreach ($contact_guids as $guid) {
+                            $user = get_entity((int) $guid);
+                            if (!$user instanceof \ElggUser || !(bool) elgg()->activityPubUtility->isEnabledUser($user)) {
+                                continue;
+                            }
+                            $contacts[] = [
+                                'id' => elgg()->activityPubUtility->getActivityPubID($user),
+                            ];
+                        }
+
+                        if (!empty($contacts)) {
+                            $object['contacts'] = $contacts;
+                        }
+                    }
+
+                    $object['commentsEnabled'] = (bool) $entity->comments_on;
+                    $object['repliesModerationOption'] = (bool) $entity->comments_on ? 'allow_all' : 'closed';
+                    $object['timezone'] = elgg_is_active_plugin('theme') ? elgg_get_plugin_setting('timezone', 'theme', 'UTC') : date_default_timezone_get();
+                    $object['anonymousParticipationEnabled'] = (bool) $entity->register_nologin;
+                    $object['category'] = (string) $entity->event_type ?: 'MEETING';
+                    $object['isOnline'] = false;
+                    $object['status'] = 'CONFIRMED';
+                    $object['externalParticipationUrl'] = (string) $entity->getURL();
+                    $object['joinMode'] = 'external';
+
+                    $attendee_count = (int) $entity->countAttendees();
+                    $object['participantCount'] = $attendee_count;
+
+                    $object['maximumAttendeeCapacity'] = isset($entity->max_attendees) ? (int) $entity->max_attendees : null;
+                    $object['remainingAttendeeCapacity'] = isset($entity->max_attendees) ? ((int) $entity->max_attendees - $attendee_count) : null;
+                }
             }
         }
 
@@ -1999,7 +2102,7 @@ class ActivityPubActivity extends \ElggObject
      */
     protected function joinRemoteMember(\ElggUser $follower, \ElggGroup $actor): bool
     {
-        if (!elgg_is_active_plugin('groups') || !(bool) elgg_get_plugin_setting('enable_group', 'activitypub') || !(bool) $actor->activitypub_enable || !(bool) $actor->activitypub_actor) {
+        if (!(bool) elgg()->activityPubUtility->isEnabledGroup($actor)) {
             return false;
         }
 

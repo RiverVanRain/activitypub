@@ -55,9 +55,11 @@ Inspired by [ActivityPub](https://www.drupal.org/project/activitypub) Drupal plu
 * [Article](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-article)
 * [Audio](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-audio)
 * [Document](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-document)
+* [Event](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-event)
 * [Image](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-image)
 * [Note](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-note)
 * [Page](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-page)
+* [Place](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-place)
 * [Video](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-video)
 
 ... more to come
@@ -94,6 +96,7 @@ You need to activate the following [bundled](https://learn.elgg.org/en/stable/pl
 
 ## Suggested Elgg plugins
 
+* [Event manager](https://github.com/ColdTrick/event_manager) to enable `Event` and `Place` object types
 * [The Wire tools](https://github.com/ColdTrick/thewire_tools) to allow post and reshare via Groups
 
 

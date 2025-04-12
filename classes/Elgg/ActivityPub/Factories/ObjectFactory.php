@@ -24,6 +24,7 @@ use Elgg\ActivityPub\Types\Object\EventType;
 use Elgg\ActivityPub\Types\Object\ImageType;
 use Elgg\ActivityPub\Types\Object\NoteType;
 use Elgg\ActivityPub\Types\Object\PageType;
+use Elgg\ActivityPub\Types\Object\PlaceType;
 use Elgg\ActivityPub\Types\Object\VideoType;
 use Elgg\Database\Clauses\OrderByClause;
 use Elgg\Exceptions\HttpException;
@@ -188,38 +189,9 @@ class ObjectFactory
         }
 
         //attachments
-        $attachments = [];
-
-        $files = elgg_get_entities([
-            'relationship' => 'attached',
-            'relationship_guid' => (int) $entity->guid,
-            'inverse_relationship' => ($entity instanceof \wZm\River\Entity\River) ? true : false, // WIP - remove after updating 'river' plugin
-            'limit' => 0,
-            'order_by' => [new OrderByClause('time_created', 'ASC')],
-        ]);
-
-        if (!empty($files)) {
-            foreach ($files as $file) {
-                $mimetype = $file->getMimeType();
-                $basetype = substr($mimetype, 0, strpos($mimetype, '/'));
-
-                $attachment = [
-                    'type' => match ($basetype) {
-                        'image' => 'Image',
-                        'video' => 'Video',
-                        'audio' => 'Audio',
-                        default => 'Document'
-                    },
-                    'name' => $file->getDisplayName(),
-                    'url' => $file->getDownloadURL(false),
-                    'mediaType' => $mimetype,
-                ];
-
-                $attachments[] = $attachment;
-            }
+        if (!empty($build['object']['attachment'])) {
+            $json['attachment'] = $build['object']['attachment'];
         }
-
-        $json['attachment'] = $attachments;
 
         $container = $entity->getContainerEntity();
 
@@ -243,6 +215,11 @@ class ObjectFactory
             $json['inReplyTo'] = $build['object']['inReplyTo'];
         }
 
+        //icon
+        if (!empty($build['object']['icon'])) {
+            $json['icon'] = $build['object']['icon'];
+        }
+
         //cover
         if (!empty($build['object']['image'])) {
             $json['image'] = $build['object']['image'];
@@ -262,10 +239,86 @@ class ObjectFactory
             $json['_misskey_summary'] = trim($summary);
         }
 
+        //mediaType
+        if (!empty($build['object']['mediaType'])) {
+            $json['mediaType'] = $build['object']['mediaType'];
+        }
+
         // If this is a 'reply', then cc in the owner of who we are replying to
         if ($json['inReplyTo'] ?? null) {
             $replyObject = $this->fromUri($json['inReplyTo']);
             $json['cc'][] = $replyObject->attributedTo;
+        }
+
+        // Event
+        if ($entity instanceof \Event) {
+            if (!empty($build['object']['startTime'])) {
+                $json['startTime'] = $build['object']['startTime'];
+            }
+
+            if (!empty($build['object']['endTime'])) {
+                $json['endTime'] = $build['object']['endTime'];
+            }
+
+            if (!empty($build['object']['location']) && is_array($build['object']['location'])) {
+                $json['location'] = $build['object']['location'];
+            }
+
+            if (!empty($build['object']['contacts'])) {
+                $json['contacts'] = $build['object']['contacts'];
+            }
+
+            if (!empty($build['object']['commentsEnabled'])) {
+                $json['commentsEnabled'] = $build['object']['commentsEnabled'];
+            }
+
+            if (!empty($build['object']['timezone'])) {
+                $json['timezone'] = $build['object']['timezone'];
+            }
+
+            if (!empty($build['object']['repliesModerationOption'])) {
+                $json['repliesModerationOption'] = $build['object']['repliesModerationOption'];
+            }
+
+            if (!empty($build['object']['anonymousParticipationEnabled'])) {
+                $json['anonymousParticipationEnabled'] = $build['object']['anonymousParticipationEnabled'];
+            }
+
+            if (!empty($build['object']['category'])) {
+                $json['category'] = $build['object']['category'];
+            }
+
+            if (!empty($build['object']['inLanguage'])) {
+                $json['inLanguage'] = $build['object']['inLanguage'];
+            }
+
+            if (!empty($build['object']['isOnline'])) {
+                $json['isOnline'] = $build['object']['isOnline'];
+            }
+
+            if (!empty($build['object']['status'])) {
+                $json['status'] = $build['object']['status'];
+            }
+
+            if (!empty($build['object']['externalParticipationUrl'])) {
+                $json['externalParticipationUrl'] = $build['object']['externalParticipationUrl'];
+            }
+
+            if (!empty($build['object']['joinMode'])) {
+                $json['joinMode'] = $build['object']['joinMode'];
+            }
+
+            if (!empty($build['object']['participantCount'])) {
+                $json['participantCount'] = $build['object']['participantCount'];
+            }
+
+            if (!empty($build['object']['maximumAttendeeCapacity'])) {
+                $json['maximumAttendeeCapacity'] = $build['object']['maximumAttendeeCapacity'];
+            }
+
+            if (!empty($build['object']['remainingAttendeeCapacity'])) {
+                $json['remainingAttendeeCapacity'] = $build['object']['remainingAttendeeCapacity'];
+            }
         }
 
         return $this->fromJson($json);
@@ -363,9 +416,13 @@ class ObjectFactory
         }
 
         if (isset($json['source']) && is_array($json['source'])) {
-            $object->source = new SourceType();
-            $object->source->content = $json['source']['content'];
-            $object->source->mediaType = $json['source']['mediaType'];
+            $source = new SourceType();
+            $source->content = $json['source']['content'];
+            if (isset($json['source']['mediaType'])) {
+                $source->mediaType = $json['source']['mediaType'];
+            }
+
+            $object->source = $source;
         }
 
         if (isset($json['_misskey_summary'])) {
@@ -406,6 +463,109 @@ class ObjectFactory
 
         if (isset($json['quoteUri'])) {
             $object->quoteUri = $json['quoteUri'];
+        }
+
+        // EventType
+        if ($json['type'] === 'Event') {
+            if (isset($json['startTime'])) {
+                $object->startTime = $json['startTime'];
+            }
+
+            if (isset($json['endTime'])) {
+                $object->endTime = $json['endTime'];
+            }
+
+            if (isset($json['location']) && is_array($json['location'])) {
+                $location = new PlaceType();
+                $location->name = $json['location']['name'] ?? '';
+
+                if (isset($json['location']['accuracy'])) {
+                    $location->accuracy = $json['location']['accuracy'];
+                }
+
+                if (isset($json['location']['altitude'])) {
+                    $location->altitude = $json['location']['altitude'];
+                }
+
+                if (isset($json['location']['latitude'])) {
+                    $location->latitude = $json['location']['latitude'];
+                }
+
+                if (isset($json['location']['longitude'])) {
+                    $location->longitude = $json['location']['longitude'];
+                }
+
+                if (isset($json['location']['radius'])) {
+                    $location->radius = $json['location']['radius'];
+                }
+
+                if (isset($json['location']['units'])) {
+                    $location->units = $json['location']['units'];
+                }
+
+                if (isset($json['location']['address'])) {
+                    $location->address = $json['location']['address'];
+                }
+
+                $object->location = $location;
+            }
+
+            if (isset($json['contacts'])) {
+                $object->contacts = $json['contacts'];
+            }
+
+            if (isset($json['commentsEnabled'])) {
+                $object->commentsEnabled = $json['commentsEnabled'];
+            }
+
+            if (isset($json['timezone'])) {
+                $object->timezone = $json['timezone'];
+            }
+
+            if (isset($json['repliesModerationOption'])) {
+                $object->repliesModerationOption = $json['repliesModerationOption'];
+            }
+
+            if (isset($json['anonymousParticipationEnabled'])) {
+                $object->anonymousParticipationEnabled = $json['anonymousParticipationEnabled'];
+            }
+
+            if (isset($json['category'])) {
+                $object->category = $json['category'];
+            }
+
+            if (isset($json['inLanguage'])) {
+                $object->inLanguage = $json['inLanguage'];
+            }
+
+            if (isset($json['isOnline'])) {
+                $object->isOnline = $json['isOnline'];
+            }
+
+            if (isset($json['status'])) {
+                $object->status = $json['status'];
+            }
+
+            if (isset($json['externalParticipationUrl'])) {
+                $object->externalParticipationUrl = $json['externalParticipationUrl'];
+            }
+
+            if (isset($json['joinMode'])) {
+                $object->joinMode = $json['joinMode'];
+            }
+
+            $object->participantCount = 0;
+            if (isset($json['participantCount'])) {
+                $object->participantCount = $json['participantCount'];
+            }
+
+            if (isset($json['maximumAttendeeCapacity'])) {
+                $object->maximumAttendeeCapacity = $json['maximumAttendeeCapacity'];
+            }
+
+            if (isset($json['remainingAttendeeCapacity'])) {
+                $object->remainingAttendeeCapacity = $json['remainingAttendeeCapacity'];
+            }
         }
 
         return $object;
