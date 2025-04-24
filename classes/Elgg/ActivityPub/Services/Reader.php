@@ -237,8 +237,12 @@ class Reader
      *
      * @return string[]
      */
-    protected function findNewPermalinks(array $items, array $canonicalUrls)
+    protected function findNewPermalinks(array $items = [], array $canonicalUrls = [])
     {
+        if (empty($items) || empty($canonicalUrls)) {
+            return [];
+        }
+
         $already_imported = elgg_call(ELGG_IGNORE_ACCESS, function () use ($canonicalUrls) {
             return elgg_get_entities([
                 'type' => 'object',
@@ -360,13 +364,13 @@ class Reader
     {
         $user = elgg()->activityPubManager->getEntityFromUri($item['author']);
         if (!$user instanceof FederatedUser || $user->isBanned()) {
-            return;
+            return false;
         }
 
         $created = Values::normalizeTimestamp((string) $item['published']);
 
         if ((int) $created < (int) $user->time_created) {
-            return;
+            return false;
         }
 
         // try create a group post

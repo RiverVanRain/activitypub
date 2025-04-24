@@ -1276,6 +1276,7 @@ class ActivityPubActivity extends \ElggObject
 
         if (!empty($url)) {
             try {
+/*
                 $date = gmdate('D, d M Y H:i:s T', time());
 
                 $keyId = elgg_generate_url('view:activitypub:application');
@@ -1286,7 +1287,6 @@ class ActivityPubActivity extends \ElggObject
                 $host = $parsed['host'];
                 $path = $parsed['path'];
 
-                // Create signature.
                 $signature = elgg()->activityPubSignature->createSignature((string) elgg_get_site_entity()->getDomain(), $host, $path, $digest, $date);
 
                 $options = [
@@ -1301,6 +1301,8 @@ class ActivityPubActivity extends \ElggObject
                 ];
 
                 $response = elgg()->activityPubUtility->http_client()->get($url, $options);
+*/
+                $response = elgg()->activityPubClient->request('GET', $url);
 
                 $body = $response->getBody()->getContents();
 
@@ -1337,7 +1339,14 @@ class ActivityPubActivity extends \ElggObject
             try {
                 $payload = json_decode($this->getPayload(), true);
 
-                elgg()->activityPubReader->read($payload);
+                $result = elgg()->activityPubReader->read($payload);
+                if ($result === false) {
+                    if ((bool) elgg_get_plugin_setting('log_activity_error', 'activitypub')) {
+                        $this->log('Error reading activityPubReader from GUID: ' . (int) $this->guid);
+                    }
+
+                    return false;
+                }
 
                 $this->setMetadata('post_processed', 1);
                 $this->save();
@@ -1792,6 +1801,9 @@ class ActivityPubActivity extends \ElggObject
         if (elgg_is_active_plugin('likes') && $type === 'Like' && $this->getCollection() === ActivityPubActivity::INBOX && (bool) $this->isProcessed()) {
             $entity_guid = (int) $this->entity_guid;
             $entity = get_entity($entity_guid);
+            if (!$entity instanceof \ElggEntity) {
+                return;
+            }
 
             try {
                 $payload = json_decode($this->getPayload(), true);
@@ -1891,6 +1903,8 @@ class ActivityPubActivity extends \ElggObject
         }
 
         // WIP - Incoming Dislike request.
+
+        return false;
     }
 
     /**

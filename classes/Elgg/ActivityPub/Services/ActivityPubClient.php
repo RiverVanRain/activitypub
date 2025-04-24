@@ -65,7 +65,7 @@ class ActivityPubClient
             headers: [
                 'Host' => $host,
                 'Date' => (new DateTime())->format('D, d M Y H:i:s \G\M\T'),
-                'Content-Type' => 'application/activity+json',
+                'Content-Type' => 'application/activity+json; charset=utf-8',
                 'Accept' => 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
             ],
             body: json_encode($body),

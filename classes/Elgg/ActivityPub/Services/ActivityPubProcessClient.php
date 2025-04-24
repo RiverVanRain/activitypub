@@ -336,11 +336,23 @@ class ActivityPubProcessClient
         if (!empty($activities)) {
             foreach ($activities as $activity) {
                 try {
-                    $activity->doInboxProcess();
+                    $result = $activity->doInboxProcess();
+
+                    if ($result === false) {
+                        if ((bool) elgg_get_plugin_setting('log_general_inbox_error', 'activitypub')) {
+                            $this->log(elgg_echo('activitypub:inbox:general:exception', [__FILE__, __LINE__, (int) $activity->guid, 'doInboxProcess returned false']));
+                        }
+
+                        $activity->setMetadata('queued', 0);
+
+                        continue;
+                    }
                 } catch (\Exception $e) {
                     if ((bool) elgg_get_plugin_setting('log_general_inbox_error', 'activitypub')) {
-                        $this->log(elgg_echo('activitypub:inbox:general:exception', [$e->getFile(), $e->getLine(), $activity->guid, $e->getMessage()]));
+                        $this->log(elgg_echo('activitypub:inbox:general:exception', [$e->getFile(), $e->getLine(), (int) $activity->guid, $e->getMessage()]));
                     }
+
+                    continue;
                 }
 
                 try {
@@ -349,8 +361,18 @@ class ActivityPubProcessClient
                     $activity->setMetadata('status', 1);
 
                     $activity->save();
-                    $activity->postSaveProcess();
+                    $result = $activity->postSaveProcess();
+                    if ($result === false) {
+                        if ((bool) elgg_get_plugin_setting('log_general_inbox_error', 'activitypub')) {
+                            $this->log(elgg_echo('activitypub:inbox:general:exception', [__FILE__, __LINE__, (int) $activity->guid, 'postSaveProcess returned false']));
+                        }
+
+                        $activity->setMetadata('status', 0);
+
+                        continue;
+                    }
                 } catch (\Exception $ignored) {
+                    continue;
                 }
             }
         }
