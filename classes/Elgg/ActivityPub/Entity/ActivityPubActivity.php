@@ -2091,6 +2091,10 @@ class ActivityPubActivity extends \ElggObject
      */
     protected function addRemoteFriend(\ElggUser $follower, \ElggUser $actor): bool
     {
+        if ((int) $follower->guid === (int) $actor->guid) {
+            return false; 
+        }
+        
         // Request friendship
         if ((bool) elgg_get_plugin_setting('friend_request', 'friends')) {
             $this->requestFriend($follower, $actor);

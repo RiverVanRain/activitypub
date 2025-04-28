@@ -366,9 +366,7 @@ class ActivityPubProcessClient
                         if ((bool) elgg_get_plugin_setting('log_general_inbox_error', 'activitypub')) {
                             $this->log(elgg_echo('activitypub:inbox:general:exception', [__FILE__, __LINE__, (int) $activity->guid, 'postSaveProcess returned false']));
                         }
-
-                        $activity->setMetadata('status', 0);
-
+                        
                         continue;
                     }
                 } catch (\Exception $ignored) {
