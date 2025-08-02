@@ -15,6 +15,8 @@ if (!$item instanceof \ElggRiverItem) {
     return;
 }
 
+$object = $item->getObjectEntity();
+
 // metadata (eg. menus)
 $metadata = elgg_extract('metadata', $vars);
 if (!isset($metadata)) {
@@ -23,8 +25,7 @@ if (!isset($metadata)) {
         'prepare_dropdown' => true,
     ]);
 
-    $object = $item->getObjectEntity();
-    if ($object) {
+    if ($object instanceof \ElggEntity) {
         $metadata .= elgg_view_menu('social', [
             'entity' => $object,
             'item' => $item,

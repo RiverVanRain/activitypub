@@ -529,7 +529,7 @@ class ActivityPubActivity extends \ElggObject
                     $object['to'][] = elgg_generate_url('view:activitypub:group', [
                         'guid' => (int) $container->getGUID()
                     ]);
-                } elseif ($container->getContainerEntity() instanceof \ElggGroup) {
+                } elseif ($container instanceof \ElggEntity && $container->getContainerEntity() instanceof \ElggGroup) {
                     $object['audience'][] = elgg_generate_url('view:activitypub:group', [
                         'guid' => (int) $container->getContainerEntity()->getGUID()
                     ]);
@@ -543,7 +543,7 @@ class ActivityPubActivity extends \ElggObject
                 if ($entity instanceof \ElggComment || $entity instanceof \ElggWire || $entity instanceof \wZm\River\Entity\River) {
                     $reply_to = [];
 
-                    if ($entity instanceof \ElggComment) {
+                    if ($container instanceof \ElggEntity && $entity instanceof \ElggComment) {
                         $container_url = (string) $container->getURL();
 
                         if ($container instanceof \ElggComment) {
